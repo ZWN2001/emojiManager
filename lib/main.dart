@@ -1,5 +1,6 @@
 
 import 'package:emoji_manager/ui/bank.dart';
+import 'package:emoji_manager/ui/make.dart';
 import 'package:emoji_manager/ui/settings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -27,25 +28,32 @@ class _MyHomePageState extends State<MyHomePage> {
   int page = 0;
 
   @override
+  void initState() {
+    super.initState();
+    pageController = PageController(initialPage: this.page);
+  }
+
+  @override
   Widget build(BuildContext context) {
     return WillPopScope(
         child: Scaffold(
           body: PageView(
-            children: <Widget>[BankPage(), SettingPage()],
+            children: <Widget>[BankPage(), MakePage(), SettingPage()],
             onPageChanged: onPageChanged,
             controller: pageController,
           ),
           floatingActionButton: FloatingActionButton(
             // elevation: 6.0,
             highlightElevation: 8.0,
-            onPressed: () {},
+            onPressed: () {
+              onTap(1);
+            },
             child: Icon(
               Icons.add,
               color: Colors.white,
             ),
           ),
-          floatingActionButtonLocation:
-          FloatingActionButtonLocation.centerDocked,
+          floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
           bottomNavigationBar: BottomAppBar(
             color: Theme.of(context).accentColor,
             shape: CircularNotchedRectangle(),
@@ -62,8 +70,8 @@ class _MyHomePageState extends State<MyHomePage> {
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: <Widget>[
-                          Icon(Icons.image, color: getColor(1)),
-                          Text("库", style: TextStyle(color: getColor(1)))
+                          Icon(Icons.image, color: getColor(0)),
+                          Text("库", style: TextStyle(color: getColor(0)))
                         ],
                       )),
                   Column(
@@ -78,7 +86,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   ),
                   GestureDetector(
                       onTap: () {
-                        onTap(1);
+                        onTap(2);
                       },
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
@@ -102,12 +110,6 @@ class _MyHomePageState extends State<MyHomePage> {
           }
           return false;
         });
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    pageController = PageController(initialPage: this.page);
   }
 
   void onPageChanged(int value) {
