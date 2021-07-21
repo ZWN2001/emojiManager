@@ -38,7 +38,7 @@ class _MyHomePageState extends State<MyHomePage> {
     return WillPopScope(
         child: Scaffold(
           body: PageView(
-            children: <Widget>[BankPage(), MakePage(), SettingPage()],
+            children: <Widget>[BankPage(), ImageEditorDemo(), SettingPage()],
             onPageChanged: onPageChanged,
             controller: pageController,
           ),
