@@ -23,12 +23,13 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+    #图片处理：
   extended_image: ^4.1.0
-#  url_launcher: 6.0.9
-#  image: 3.0.2
   image_editor: 1.0.0
   wechat_assets_picker: 5.5.8
   photo_manager: 1.2.7
+
+  get: ^4.2.4
 
 
   # The following adds the Cupertino Icons font to your application.
@@ -66,11 +67,11 @@ flutter:
   # "family" key with the font family name, and a "fonts" key with a
   # list giving the asset and other descriptors for the font. For
   # example:
-  # fonts:
-  #   - family: Schyler
-  #     fonts:
-  #       - asset: fonts/Schyler-Regular.ttf
-  #       - asset: fonts/Schyler-Italic.ttf
+  fonts:
+    - family: MyIcons
+      fonts:
+        - asset: assets/ic_make.ttf
+
   #         style: italic
   #   - family: Trajan Pro
   #     fonts:

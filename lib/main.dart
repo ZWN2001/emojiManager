@@ -1,16 +1,17 @@
-
 import 'package:emoji_manager/ui/bank.dart';
 import 'package:emoji_manager/ui/make.dart';
 import 'package:emoji_manager/ui/settings.dart';
+import 'package:emoji_manager/util/my_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:get/get_navigation/src/root/get_material_app.dart';
 
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return GetMaterialApp(
       theme: ThemeData(primarySwatch: Colors.deepOrange),
       home: MyHomePage(),
     );
@@ -38,7 +39,7 @@ class _MyHomePageState extends State<MyHomePage> {
     return WillPopScope(
         child: Scaffold(
           body: PageView(
-            children: <Widget>[BankPage(), ImageEditorDemo(), SettingPage()],
+            children: <Widget>[BankPage(), MakePage(), SettingPage()],
             onPageChanged: onPageChanged,
             controller: pageController,
           ),
@@ -49,8 +50,8 @@ class _MyHomePageState extends State<MyHomePage> {
               onTap(1);
             },
             child: Icon(
-              Icons.add,
-              color: Colors.white,
+              MyIcons.make,
+              color: getColor(1),
             ),
           ),
           floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
@@ -70,7 +71,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: <Widget>[
-                          Icon(Icons.image, color: getColor(0)),
+                          Icon(Icons.image_outlined, color: getColor(0)),
                           Text("库", style: TextStyle(color: getColor(0)))
                         ],
                       )),
@@ -81,7 +82,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         Icons.home,
                         color: Colors.transparent,
                       ),
-                      Text("添加", style: TextStyle(color: Color(0xFFEEEEEE)))
+                      Text("制作", style: TextStyle(color: Color(0xFFEEEEEE)))
                     ],
                   ),
                   GestureDetector(
@@ -91,7 +92,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: <Widget>[
-                          Icon(Icons.settings, color: getColor(2)),
+                          Icon(Icons.settings_outlined, color: getColor(2)),
                           Text("设置", style: TextStyle(color: getColor(2)))
                         ],
                       )),
