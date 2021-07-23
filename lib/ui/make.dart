@@ -1,6 +1,5 @@
 import 'dart:typed_data';
 
-import 'package:emoji_manager/ui/image_edit_page.dart';
 import 'package:emoji_manager/util/image_edit_util/image_picker_io.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';

@@ -32,29 +32,25 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int lastTime = 0;
-  late PageController pageController;
-  int page = 0;
+  int index = 0;
 
+  final List<Widget>  pages = [BankPage(), MakePage(), SettingPage()];
   @override
   void initState() {
     super.initState();
-    pageController = PageController(initialPage: this.page);
   }
 
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
         child: Scaffold(
-          body: PageView(
-            children: <Widget>[BankPage(), MakePage(), SettingPage()],
-            onPageChanged: onPageChanged,
-            controller: pageController,
-          ),
+          body: pages[index],
+
           floatingActionButton: FloatingActionButton(
             // elevation: 6.0,
             highlightElevation: 8.0,
             onPressed: () {
-              onTap(1);
+              onPageChanged(1);
             },
             child: Icon(
               MyIcons.make,
@@ -62,6 +58,7 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
           ),
           floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+
           bottomNavigationBar: BottomAppBar(
             color: Theme.of(context).accentColor,
             shape: CircularNotchedRectangle(),
@@ -73,7 +70,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 children: <Widget>[
                   GestureDetector(
                       onTap: () {
-                        onTap(0);
+                        onPageChanged(0);
                       },
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
@@ -89,12 +86,12 @@ class _MyHomePageState extends State<MyHomePage> {
                         Icons.home,
                         color: Colors.transparent,
                       ),
-                      Text("制作", style: TextStyle(color: Color(0xFFEEEEEE)))
+                      Text("制作", style: TextStyle(color: getColor(1)))
                     ],
                   ),
                   GestureDetector(
                       onTap: () {
-                        onTap(2);
+                        onPageChanged(2);
                       },
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
@@ -122,19 +119,14 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void onPageChanged(int value) {
     setState(() {
-      this.page = value;
+      this.index = value;
     });
   }
 
   Color getColor(int value) {
-    return this.page == value
+    return this.index == value
         ? Theme.of(context).cardColor
         : Color(0XFFBBBBBB);
-  }
-
-  void onTap(int value) {
-    pageController.animateToPage(value,
-        duration: const Duration(milliseconds: 500), curve: Curves.ease);
   }
 }
 
