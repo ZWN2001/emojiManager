@@ -2,9 +2,11 @@ import 'package:emoji_manager/ui/bank.dart';
 import 'package:emoji_manager/ui/image_edit_page.dart';
 import 'package:emoji_manager/ui/make.dart';
 import 'package:emoji_manager/ui/settings.dart';
+import 'package:emoji_manager/ui/static_emoji_info.dart';
 import 'package:emoji_manager/util/my_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:get/get_navigation/src/routes/get_route.dart';
 
@@ -18,6 +20,7 @@ class MyApp extends StatelessWidget {
       getPages: [
         GetPage(name: '/', page: () => MyHomePage()),
         GetPage(name: '/ImageEditPage', page:()=>ImageEditPage()),
+        GetPage(name: '/StaticEmojiInfo', page:()=>StaticEmojiInfo()),
       ],
       theme: ThemeData(primarySwatch: Colors.deepOrange),
       home: MyHomePage(),
@@ -106,10 +109,11 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
         ),
         onWillPop: () async {
+          Fluttertoast.showToast(msg: '再按一次退出APP');
           int newTime = DateTime.now().millisecondsSinceEpoch;
           int result = newTime - lastTime;
           lastTime = newTime;
-          if (result > 2000) {
+          if (result > 2500) {
           } else {
             SystemNavigator.pop();
           }

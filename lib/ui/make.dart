@@ -33,7 +33,7 @@ class MakePage extends StatelessWidget{
               onPressed: () async {
                 Uint8List? _memoryImage = await pickImage(context);
                 if(_memoryImage!=null){
-                  Get.toNamed("/ImageEditPage",arguments: _memoryImage);
+                  Get.toNamed("/StaticEmojiInfo",arguments: _memoryImage);
                 }
               },
             ),
