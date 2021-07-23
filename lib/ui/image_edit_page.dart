@@ -45,6 +45,7 @@ class _ImageEditPageState extends State<ImageEditPage> {
 
   @override
   Widget build(BuildContext context) {
+    Uint8List?  _memoryImage=ModalRoute.of(context)!.settings.arguments as Uint8List?;
     return Scaffold(
       appBar: AppBar(
         title: const Text('image editor'),
@@ -65,7 +66,7 @@ class _ImageEditPageState extends State<ImageEditPage> {
         Expanded(
           child: _memoryImage != null
               ? ExtendedImage.memory(
-            _memoryImage!,
+            _memoryImage,
             fit: BoxFit.contain,
             mode: ExtendedImageMode.editor,
             enableLoadState: true,

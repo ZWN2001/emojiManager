@@ -1,10 +1,14 @@
+import 'dart:typed_data';
+
+import 'package:emoji_manager/ui/image_edit_page.dart';
+import 'package:emoji_manager/util/image_edit_util/image_picker_io.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class MakePage extends StatelessWidget{
-
   @override
-  Widget build(BuildContext context) {
+  Widget build(context) {
     final size =MediaQuery.of(context).size;
     final width =size.width;
     final height =size.height;
@@ -27,8 +31,11 @@ class MakePage extends StatelessWidget{
                   ),
               ),
               child: Text('制作静态表情包', style: TextStyle(fontSize: 24),),
-              onPressed: () {
-
+              onPressed: () async {
+                Uint8List? _memoryImage = await pickImage(context);
+                if(_memoryImage!=null){
+                  Get.toNamed("/ImageEditPage",arguments: _memoryImage);
+                }
               },
             ),
 
@@ -66,7 +73,6 @@ class MakePage extends StatelessWidget{
           ],
         ),
       )
-
     );
   }
 
