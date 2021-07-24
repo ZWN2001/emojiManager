@@ -63,6 +63,7 @@ class _ImageEditPageState extends State<ImageEditPage> {
         ],
       ),
       body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
                 SizedBox(height: 20,),
                 Text('    名称: $_name',style: TextStyle(fontSize: 20),),

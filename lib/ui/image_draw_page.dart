@@ -1,10 +1,9 @@
 import 'dart:typed_data';
-
-import 'package:emoji_manager/util/file_utils.dart';
+import 'dart:ui' as ui;
+import 'package:emoji_manager/util/image_edit_util/image_picker_io.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:emoji_manager/util/image_draw_painter.dart';
-import 'dart:io';
 
 class DrawlPage extends StatefulWidget {
   @override
@@ -37,8 +36,7 @@ class _DrawlState extends State<DrawlPage> {
   @override
   Widget build(BuildContext context) {
     imageFile=ModalRoute.of(context)!.settings.arguments as Uint8List;
-    return SafeArea(
-      child: Scaffold(
+    return Scaffold(
         appBar: AppBar(title:Text('表情包涂鸦')),
         body: Container(
           child: Column(
@@ -69,8 +67,7 @@ class _DrawlState extends State<DrawlPage> {
             ],
           ),
         ),
-      ),
-    );
+      );
   }
 
   Widget _buildCanvas() {
@@ -218,13 +215,28 @@ class _DrawlState extends State<DrawlPage> {
               onTap: () {
                 RenderRepaintBoundary boundary =
                     _repaintKey.currentContext!.findRenderObject() as RenderRepaintBoundary;
-                saveScreenShot2SDCard(boundary);
+                saveEmoji(boundary);
               },
             ),
           ],
         );
       }),
     );
+  }
+  Future saveEmoji(RenderRepaintBoundary boundary) async {
+    capturePng2List(boundary).then((uint8List) async {
+      if (uint8List == null || uint8List.length == 0) {
+        return;
+      }
+      ImageSaver.save('name', uint8List);
+    });
+  }
+  Future<Uint8List> capturePng2List(RenderRepaintBoundary boundary) async {
+    ui.Image image =
+    await boundary.toImage(pixelRatio: ui.window.devicePixelRatio);
+    ByteData? byteData = await image.toByteData(format: ui.ImageByteFormat.png);
+    Uint8List pngBytes = byteData!.buffer.asUint8List();
+    return pngBytes;
   }
 
   void reset() {
