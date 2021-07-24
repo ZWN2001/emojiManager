@@ -215,7 +215,7 @@ class _DrawlState extends State<DrawlPage> {
               onTap: () {
                 RenderRepaintBoundary boundary =
                     _repaintKey.currentContext!.findRenderObject() as RenderRepaintBoundary;
-                saveEmoji(boundary);
+                _saveEmoji(boundary);
               },
             ),
           ],
@@ -223,15 +223,15 @@ class _DrawlState extends State<DrawlPage> {
       }),
     );
   }
-  Future saveEmoji(RenderRepaintBoundary boundary) async {
-    capturePng2List(boundary).then((uint8List) async {
+  Future _saveEmoji(RenderRepaintBoundary boundary) async {
+    _capturePng(boundary).then((uint8List) async {
       if (uint8List == null || uint8List.length == 0) {
         return;
       }
       ImageSaver.save('name', uint8List);
     });
   }
-  Future<Uint8List> capturePng2List(RenderRepaintBoundary boundary) async {
+  Future<Uint8List> _capturePng(RenderRepaintBoundary boundary) async {
     ui.Image image =
     await boundary.toImage(pixelRatio: ui.window.devicePixelRatio);
     ByteData? byteData = await image.toByteData(format: ui.ImageByteFormat.png);

@@ -65,10 +65,10 @@ class _ImageEditPageState extends State<ImageEditPage> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-                SizedBox(height: 20,),
-                Text('    名称: $_name',style: TextStyle(fontSize: 20),),
+                SizedBox(height: 30,),
+                Text('    名称 :  $_name',style: TextStyle(fontSize: 20),),
                 SizedBox(height: 5,),
-                Text('    关键词: $_keyWord',style: TextStyle(fontSize: 20),),
+                Text('    关键词 :  $_keyWord',style: TextStyle(fontSize: 20),),
 
             _imageWidget(_memoryImage)
           ]
@@ -88,7 +88,7 @@ class _ImageEditPageState extends State<ImageEditPage> {
         initEditorConfigHandler: (ExtendedImageState? state) {
           return EditorConfig(
             maxScale: 8.0,
-            cropRectPadding: const EdgeInsets.fromLTRB(20, 10, 20, 20),
+            cropRectPadding: const EdgeInsets.fromLTRB(20, 0, 20, 40),
             hitTestSize: 20.0,
             cropLayerPainter: _cropLayerPainter!,
             initCropRectType: InitCropRectType.imageRect,
