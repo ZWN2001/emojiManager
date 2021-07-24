@@ -1,9 +1,8 @@
 import 'dart:io';
 
-import 'package:emoji_manager/dialog/text_field_dialog.dart';
 import 'package:emoji_manager/util/directory_util.dart';
+import 'package:emoji_manager/widget/dialog/text_field_dialog.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 
