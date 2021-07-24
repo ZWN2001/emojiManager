@@ -3,6 +3,7 @@ import 'package:emoji_manager/ui/image_edit_page.dart';
 import 'package:emoji_manager/ui/make.dart';
 import 'package:emoji_manager/ui/settings.dart';
 import 'package:emoji_manager/ui/static_emoji_info.dart';
+import 'package:emoji_manager/util/directory_util.dart';
 import 'package:emoji_manager/util/icon_util/antd_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -43,7 +44,6 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     super.initState();
     DirectoryUtil().createDir(dirName);
-    pageController = PageController(initialPage: this.page);
   }
 
   @override
