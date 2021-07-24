@@ -2,14 +2,15 @@ import 'dart:async';
 import 'dart:typed_data';
 import 'dart:ui';
 
+import 'package:emoji_manager/ui/image_draw_page.dart';
 import 'package:emoji_manager/util/image_edit_util/aspect_ratio.dart';
 import 'package:emoji_manager/util/image_edit_util/crop_editor_helper.dart';
-import 'package:emoji_manager/util/image_edit_util/image_picker_io.dart';
 import 'package:emoji_manager/widget/flat_button_with_icon.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 
 class ImageEditPage extends StatefulWidget {
@@ -22,7 +23,7 @@ class _ImageEditPageState extends State<ImageEditPage> {
   GlobalKey<ExtendedImageEditorState>();
   final GlobalKey<PopupMenuButtonState<EditorCropLayerPainter>> popupMenuKey =
   GlobalKey<PopupMenuButtonState<EditorCropLayerPainter>>();
-  final List<AspectRatioItem> _aspectRatios = <AspectRatioItem>[
+  final List<AspectRatioItem> _cropAspectRatios = <AspectRatioItem>[
     AspectRatioItem(text: '自定义', value: CropAspectRatios.custom),
     AspectRatioItem(text: '原始比例', value: CropAspectRatios.original),
     AspectRatioItem(text: '1*1', value: CropAspectRatios.ratio1_1),
@@ -31,14 +32,14 @@ class _ImageEditPageState extends State<ImageEditPage> {
     AspectRatioItem(text: '16*9', value: CropAspectRatios.ratio16_9),
     AspectRatioItem(text: '9*16', value: CropAspectRatios.ratio9_16)
   ];
-  AspectRatioItem? _aspectRatio;
+  AspectRatioItem? _cropAspectRatio;
   bool _cropping = false;
 
   EditorCropLayerPainter? _cropLayerPainter;
 
   @override
   void initState() {
-    _aspectRatio = _aspectRatios.first;
+    _cropAspectRatio = _cropAspectRatios.first;
     _cropLayerPainter = const EditorCropLayerPainter();
     super.initState();
   }
@@ -77,9 +78,8 @@ class _ImageEditPageState extends State<ImageEditPage> {
 
   Widget _imageWidget( Uint8List?  _memoryImage){
     return  Expanded(
-      child: _memoryImage != null
-          ? ExtendedImage.memory(
-        _memoryImage,
+      child: ExtendedImage.memory(
+        _memoryImage!,
         fit: BoxFit.contain,
         mode: ExtendedImageMode.editor,
         enableLoadState: true,
@@ -91,29 +91,11 @@ class _ImageEditPageState extends State<ImageEditPage> {
             hitTestSize: 20.0,
             cropLayerPainter: _cropLayerPainter!,
             initCropRectType: InitCropRectType.imageRect,
-            cropAspectRatio: _aspectRatio!.value,
+            cropAspectRatio: _cropAspectRatio!.value,
           );
         },
         cacheRawData: true,
       )
-          : ExtendedImage.asset(
-        'assets/image.jpg',
-        fit: BoxFit.contain,
-        mode: ExtendedImageMode.editor,
-        enableLoadState: true,
-        extendedImageEditorKey: editorKey,
-        initEditorConfigHandler: (ExtendedImageState? state) {
-          return EditorConfig(
-            maxScale: 8.0,
-            cropRectPadding: const EdgeInsets.all(20.0),
-            hitTestSize: 20.0,
-            cropLayerPainter: _cropLayerPainter!,
-            initCropRectType: InitCropRectType.imageRect,
-            cropAspectRatio: _aspectRatio!.value,
-          );
-        },
-        cacheRawData: true,
-      ),
     );
   }
   Widget _bottomAppBar(){
@@ -151,22 +133,22 @@ class _ImageEditPageState extends State<ImageEditPage> {
                               padding: const EdgeInsets.all(20.0),
                               itemBuilder: (_, int index) {
                                 final AspectRatioItem item =
-                                _aspectRatios[index];
+                                _cropAspectRatios[index];
                                 return GestureDetector(
                                   child: AspectRatioWidget(
                                     aspectRatio: item.value,
                                     aspectRatioS: item.text,
-                                    isSelected: item == _aspectRatio,
+                                    isSelected: item == _cropAspectRatio,
                                   ),
                                   onTap: () {
                                     Navigator.pop(context);
                                     setState(() {
-                                      _aspectRatio = item;
+                                      _cropAspectRatio = item;
                                     });
                                   },
                                 );
                               },
-                              itemCount: _aspectRatios.length,
+                              itemCount: _cropAspectRatios.length,
                             ),
                           ),
                         ],
@@ -189,7 +171,7 @@ class _ImageEditPageState extends State<ImageEditPage> {
               icon: const Icon(Icons.rotate_left),
               label: const Text(
                 '左旋转',
-                style: TextStyle(fontSize: 8.0),
+                style: TextStyle(fontSize: 10.0),
               ),
               textColor: Colors.white,
               onPressed: () {
@@ -200,89 +182,11 @@ class _ImageEditPageState extends State<ImageEditPage> {
               icon: const Icon(Icons.rotate_right),
               label: const Text(
                 '右旋转',
-                style: TextStyle(fontSize: 8.0),
+                style: TextStyle(fontSize: 10.0),
               ),
               textColor: Colors.white,
               onPressed: () {
                 editorKey.currentState!.rotate(right: true);
-              },
-            ),
-            FlatButtonWithIcon(
-              icon: const Icon(Icons.rounded_corner_sharp),
-              label: PopupMenuButton<EditorCropLayerPainter>(
-                key: popupMenuKey,
-                enabled: false,
-                offset: const Offset(100, -300),
-                child: const Text(
-                  'Painter',
-                  style: TextStyle(fontSize: 8.0),
-                ),
-                initialValue: _cropLayerPainter,
-                itemBuilder: (BuildContext context) {
-                  return <PopupMenuEntry<EditorCropLayerPainter>>[
-                    PopupMenuItem<EditorCropLayerPainter>(
-                      child: Row(
-                        children: const <Widget>[
-                          Icon(
-                            Icons.rounded_corner_sharp,
-                            color: Colors.blue,
-                          ),
-                          SizedBox(
-                            width: 5,
-                          ),
-                          Text('Default'),
-                        ],
-                      ),
-                      value: const EditorCropLayerPainter(),
-                    ),
-                    const PopupMenuDivider(),
-                    PopupMenuItem<EditorCropLayerPainter>(
-                      child: Row(
-                        children: const <Widget>[
-                          Icon(
-                            Icons.circle,
-                            color: Colors.blue,
-                          ),
-                          SizedBox(
-                            width: 5,
-                          ),
-                          Text('Custom'),
-                        ],
-                      ),
-                      value: const CustomEditorCropLayerPainter(),
-                    ),
-                    const PopupMenuDivider(),
-                    PopupMenuItem<EditorCropLayerPainter>(
-                      child: Row(
-                        children: const <Widget>[
-                          Icon(
-                            CupertinoIcons.circle,
-                            color: Colors.blue,
-                          ),
-                          SizedBox(
-                            width: 5,
-                          ),
-                          Text('Circle'),
-                        ],
-                      ),
-                      value: const CircleEditorCropLayerPainter(),
-                    ),
-                  ];
-                },
-                onSelected: (EditorCropLayerPainter value) {
-                  if (_cropLayerPainter != value) {
-                    setState(() {
-                      if (value is CircleEditorCropLayerPainter) {
-                        _aspectRatio = _aspectRatios[2];
-                      }
-                      _cropLayerPainter = value;
-                    });
-                  }
-                },
-              ),
-              textColor: Colors.white,
-              onPressed: () {
-                popupMenuKey.currentState!.showButtonMenu();
               },
             ),
             FlatButtonWithIcon(
@@ -312,10 +216,11 @@ class _ImageEditPageState extends State<ImageEditPage> {
       Uint8List? fileData;
       fileData = await cropImageDataWithNativeLibrary(state: editorKey.currentState!);
 
-      final String? filePath =
-      await ImageSaver.save('extended_image_cropped_image.jpg', fileData!);
-
-      msg = 'save image : $filePath';
+      Get.to(()=>DrawlPage(),arguments: fileData);
+      // final String? filePath =
+      // await ImageSaver.save('extended_image_cropped_image.jpg', fileData!);
+      //
+      // msg = 'save image : $filePath';
     } catch (e, stack) {
       msg = 'save failed: $e\n $stack';
       print(msg);

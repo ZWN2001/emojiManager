@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:emoji_manager/util/image_edit_util/image_picker_io.dart';
+import 'package:emoji_manager/util/icon_util/index.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -50,7 +51,7 @@ class MakePage extends StatelessWidget{
               ),
               child: Text('制作动态表情包', style: TextStyle(fontSize: 24),),
               onPressed: () {
-
+                Get.to(()=>CustomIcons());
               },
             ),
 

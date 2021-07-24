@@ -3,7 +3,7 @@ import 'package:emoji_manager/ui/image_edit_page.dart';
 import 'package:emoji_manager/ui/make.dart';
 import 'package:emoji_manager/ui/settings.dart';
 import 'package:emoji_manager/ui/static_emoji_info.dart';
-import 'package:emoji_manager/util/my_icons.dart';
+import 'package:emoji_manager/util/icon_util/antd_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -56,8 +56,9 @@ class _MyHomePageState extends State<MyHomePage> {
               onPageChanged(1);
             },
             child: Icon(
-              MyIcons.make,
+              AntdIcons.wrenchFill,
               color: getColor(1),
+              size: 28,
             ),
           ),
           floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,

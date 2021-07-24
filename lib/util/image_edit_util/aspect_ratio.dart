@@ -35,7 +35,7 @@ class AspectRatioPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     final Color color = isSelected ? Colors.blue : Colors.grey;
     final Rect rect = Offset.zero & size;
-    //https://github.com/flutter/flutter/issues/49328
+
     final Paint paint = Paint()
       ..color = color
       ..style = PaintingStyle.fill;
