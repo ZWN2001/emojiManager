@@ -34,6 +34,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  final dirName = "emojiManager";
   int lastTime = 0;
   int index = 0;
 
@@ -41,6 +42,8 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
+    DirectoryUtil().createDir(dirName);
+    pageController = PageController(initialPage: this.page);
   }
 
   @override
