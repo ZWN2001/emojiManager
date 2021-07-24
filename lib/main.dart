@@ -1,6 +1,7 @@
 import 'package:emoji_manager/ui/bank.dart';
 import 'package:emoji_manager/ui/make.dart';
 import 'package:emoji_manager/ui/settings.dart';
+import 'package:emoji_manager/util/directory_util.dart';
 import 'package:emoji_manager/util/my_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -24,6 +25,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  final dirName = "emojiManager";
   int lastTime = 0;
   late PageController pageController;
   int page = 0;
@@ -31,6 +33,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
+    DirectoryUtil().createDir(dirName);
     pageController = PageController(initialPage: this.page);
   }
 
