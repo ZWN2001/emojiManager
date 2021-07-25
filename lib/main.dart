@@ -1,6 +1,7 @@
 import 'package:emoji_manager/ui/bank.dart';
 import 'package:emoji_manager/ui/image_edit_page.dart';
 import 'package:emoji_manager/ui/make.dart';
+import 'package:emoji_manager/ui/my_bank.dart';
 import 'package:emoji_manager/ui/settings.dart';
 import 'package:emoji_manager/ui/static_emoji_info.dart';
 import 'package:emoji_manager/util/directory_util.dart';
@@ -39,7 +40,7 @@ class _MyHomePageState extends State<MyHomePage> {
   int lastTime = 0;
   int index = 0;
 
-  final List<Widget>  pages = [BankPage(), MakePage(), SettingPage()];
+  final List<Widget>  pages = [BankPage1(), MakePage(), SettingPage()];
   @override
   void initState() {
     super.initState();

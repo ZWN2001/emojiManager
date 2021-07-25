@@ -224,11 +224,15 @@ class _DrawlState extends State<DrawlPage> {
     );
   }
   Future _saveEmoji(RenderRepaintBoundary boundary) async {
-    _capturePng(boundary).then((uint8List) async {
-      if (uint8List == null || uint8List.length == 0) {
+    _capturePng(boundary).then((unit8List) async {
+      if (unit8List.length == 0) {
         return;
       }
-      ImageSaver.save('name', uint8List);
+      final String? filePath =
+      await ImageSaver.save('extended_image_cropped_image.jpg', unit8List);
+
+      String msg = 'save image : $filePath';
+      print(msg);
     });
   }
   Future<Uint8List> _capturePng(RenderRepaintBoundary boundary) async {
