@@ -1,6 +1,4 @@
 import 'dart:typed_data';
-import 'dart:ui' as ui;
-import 'package:emoji_manager/util/image_edit_util/image_picker_io.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:emoji_manager/util/image_draw_painter.dart';
@@ -17,14 +15,15 @@ class _DrawlState extends State<DrawlPage> {
     Colors.greenAccent,
   ];
   static final List<double> lineWidths = [5.0, 8.0, 10.0];
-  late Uint8List imageFile;
+  late Uint8List _imageFile;
+  late Image _emojiImage;
   int selectedLine = 0;
   Color selectedColor = colors[0];
   List<Point> points = [Point(colors[0], lineWidths[0], [])];
   int curFrame = 0;
   bool isClear = false;
 
-  final GlobalKey _repaintKey = new GlobalKey();
+  // final GlobalKey _repaintKey = new GlobalKey();
 
   double get strokeWidth => lineWidths[selectedLine];
 
@@ -35,7 +34,8 @@ class _DrawlState extends State<DrawlPage> {
 
   @override
   Widget build(BuildContext context) {
-    imageFile=ModalRoute.of(context)!.settings.arguments as Uint8List;
+    _imageFile=ModalRoute.of(context)!.settings.arguments as Uint8List;
+    _emojiImage=Image.memory(_imageFile);
     return Scaffold(
         appBar: AppBar(title:Text('表情包涂鸦')),
         body: Container(
@@ -45,12 +45,12 @@ class _DrawlState extends State<DrawlPage> {
                 child: Container(
                   color: Colors.white,
                   margin: EdgeInsets.all(12.0),
-                  child: RepaintBoundary(
-                    key: _repaintKey,
-                    child: Stack(
-                      alignment: Alignment.center,
-                      children: <Widget>[
-                       Image.memory(imageFile),
+                  // child: RepaintBoundary(
+                  //   key: _repaintKey,
+                    child:
+                    // Stack(
+                      // alignment: Alignment.center,
+                      // children: <Widget>[
                         Positioned(
                           child: _buildCanvas(),
                           top: 0.0,
@@ -58,9 +58,9 @@ class _DrawlState extends State<DrawlPage> {
                           left: 0.0,
                           right: 0.0,
                         ),
-                      ],
-                    ),
-                  ),
+                      // ],
+                    // ),
+                  // ),
                 ),
               ),
               _buildBottom(),
@@ -73,15 +73,16 @@ class _DrawlState extends State<DrawlPage> {
   Widget _buildCanvas() {
     return StatefulBuilder(builder: (context, state) {
       return CustomPaint(
-        painter: ScrawlPainter(
+        foregroundPainter: ScrawlPainter(
           points: points,
           strokeColor: selectedColor,
           strokeWidth: strokeWidth,
           isClear: isClear,
         ),
         child: GestureDetector(
+          child: _emojiImage,
+          // child: Opacity(child: _emojiImage,opacity: 0.0,),
           onPanStart: (details) {
-            // before painting, set color & strokeWidth.
             isClear = false;
             points[curFrame].color = selectedColor;
             points[curFrame].strokeWidth = strokeWidth;
@@ -213,9 +214,9 @@ class _DrawlState extends State<DrawlPage> {
             GestureDetector(
               child: Text('保存'),
               onTap: () {
-                RenderRepaintBoundary boundary =
-                    _repaintKey.currentContext!.findRenderObject() as RenderRepaintBoundary;
-                _saveEmoji(boundary);
+                // RenderRepaintBoundary boundary =
+                //     _repaintKey.currentContext!.findRenderObject() as RenderRepaintBoundary;
+                // _saveEmoji(boundary);
               },
             ),
           ],
@@ -223,21 +224,25 @@ class _DrawlState extends State<DrawlPage> {
       }),
     );
   }
-  Future _saveEmoji(RenderRepaintBoundary boundary) async {
-    _capturePng(boundary).then((uint8List) async {
-      if (uint8List == null || uint8List.length == 0) {
-        return;
-      }
-      ImageSaver.save('name', uint8List);
-    });
-  }
-  Future<Uint8List> _capturePng(RenderRepaintBoundary boundary) async {
-    ui.Image image =
-    await boundary.toImage(pixelRatio: ui.window.devicePixelRatio);
-    ByteData? byteData = await image.toByteData(format: ui.ImageByteFormat.png);
-    Uint8List pngBytes = byteData!.buffer.asUint8List();
-    return pngBytes;
-  }
+  // Future _saveEmoji(RenderRepaintBoundary boundary) async {
+  //   _capturePng(boundary).then((unit8List) async {
+  //     if (unit8List.length == 0) {
+  //       return;
+  //     }
+  //     final String? filePath =
+  //     await ImageSaver.save('extended_image_cropped_image.jpg', unit8List);
+  //
+  //     String msg = 'save image : $filePath';
+  //     print(msg);
+  //   });
+  // }
+  // Future<Uint8List> _capturePng(RenderRepaintBoundary boundary) async {
+  //   ui.Image image =
+  //   await boundary.toImage(pixelRatio: ui.window.devicePixelRatio);
+  //   ByteData? byteData = await image.toByteData(format: ui.ImageByteFormat.png);
+  //   Uint8List pngBytes = byteData!.buffer.asUint8List();
+  //   return pngBytes;
+  // }
 
   void reset() {
     isClear = true;
