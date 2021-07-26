@@ -41,5 +41,22 @@ class DirectoryUtil {
     }
   }
 
+  //文件夹重命名
+  Future dirRename(String oldName, String newName) async {
+    Directory documentsDirectory = await getApplicationDocumentsDirectory();
+    String path = '${documentsDirectory.path}${Platform.pathSeparator}'+"emojiManager"+'${Platform.pathSeparator}$oldName';
+    var dir = Directory(path);
+    var dir3= await dir.rename('${dir.parent.absolute.path}${Platform.pathSeparator}$newName');
+    print(dir3);
+  }
+
+  //文件夹删除
+Future deleteDir(String dirName) async {
+  Directory documentsDirectory = await getApplicationDocumentsDirectory();
+  String path = '${documentsDirectory.path}${Platform.pathSeparator}'+"emojiManager"+'${Platform.pathSeparator}$dirName';
+  var dir = await Directory(path).delete();
+  print('delete');
+  }
+
 
 }
