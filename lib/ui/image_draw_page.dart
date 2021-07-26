@@ -1,4 +1,5 @@
 import 'dart:typed_data';
+import 'package:emoji_manager/util/image_edit_util/image_picker_io.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:emoji_manager/util/image_draw_painter.dart';
@@ -48,9 +49,9 @@ class _DrawlState extends State<DrawlPage> {
                   // child: RepaintBoundary(
                   //   key: _repaintKey,
                     child:
-                    // Stack(
-                      // alignment: Alignment.center,
-                      // children: <Widget>[
+                    Stack(
+                      alignment: Alignment.center,
+                      children: <Widget>[
                         Positioned(
                           child: _buildCanvas(),
                           top: 0.0,
@@ -58,8 +59,8 @@ class _DrawlState extends State<DrawlPage> {
                           left: 0.0,
                           right: 0.0,
                         ),
-                      // ],
-                    // ),
+                      ],
+                    ),
                   // ),
                 ),
               ),
@@ -213,10 +214,14 @@ class _DrawlState extends State<DrawlPage> {
             ),
             GestureDetector(
               child: Text('保存'),
-              onTap: () {
+              onTap: () async {
                 // RenderRepaintBoundary boundary =
                 //     _repaintKey.currentContext!.findRenderObject() as RenderRepaintBoundary;
                 // _saveEmoji(boundary);
+                    final String? filePath =
+                    await ImageSaver.save('extended_image_cropped_image.jpg', _emojiImage as Uint8List);
+
+                    String msg = 'save image : $filePath';
               },
             ),
           ],
