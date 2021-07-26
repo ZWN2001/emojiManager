@@ -1,15 +1,11 @@
-import 'package:emoji_manager/ui/bank.dart';
-import 'package:emoji_manager/ui/image_edit_page.dart';
-import 'package:emoji_manager/ui/make.dart';
-import 'package:emoji_manager/ui/settings.dart';
-import 'package:emoji_manager/ui/static_emoji_info.dart';
-import 'package:emoji_manager/util/directory_util.dart';
-import 'package:emoji_manager/util/icon_util/antd_icons.dart';
+import 'package:emoji_manager/ui/ui.dart';
+import 'package:emoji_manager/util/util.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:get/get_navigation/src/routes/get_route.dart';
+import 'package:emoji_manager/modules/modules.dart';
 
 void main() => runApp(MyApp());
 
@@ -19,12 +15,11 @@ class MyApp extends StatelessWidget {
     return GetMaterialApp(
       initialRoute: '/',
       getPages: [
-        GetPage(name: '/', page: () => MyHomePage()),
+        GetPage(name: '/', page: () => MyHomePage(), binding: BankBinding()),
         GetPage(name: '/ImageEditPage', page:()=>ImageEditPage()),
         GetPage(name: '/StaticEmojiInfo', page:()=>StaticEmojiInfo()),
       ],
       theme: ThemeData(primarySwatch: Colors.deepOrange),
-      home: MyHomePage(),
     );
   }
 }
@@ -39,7 +34,7 @@ class _MyHomePageState extends State<MyHomePage> {
   int lastTime = 0;
   int index = 0;
 
-  final List<Widget>  pages = [BankPage(), MakePage(), SettingPage()];
+  final List<Widget>  pages = [BankScreen(), MakePage(), SettingPage()];
   @override
   void initState() {
     super.initState();
@@ -72,7 +67,6 @@ class _MyHomePageState extends State<MyHomePage> {
             child: Padding(
               padding: EdgeInsets.fromLTRB(0, 6, 0, 6),
               child: Row(
-                mainAxisSize: MainAxisSize.max,
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: <Widget>[
                   GestureDetector(
@@ -117,8 +111,7 @@ class _MyHomePageState extends State<MyHomePage> {
           int newTime = DateTime.now().millisecondsSinceEpoch;
           int result = newTime - lastTime;
           lastTime = newTime;
-          if (result > 2500) {
-          } else {
+          if (result <= 2500) {
             SystemNavigator.pop();
           }
           return false;
