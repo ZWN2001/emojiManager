@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 
+import 'package:emoji_manager/ui/zoom_page.dart';
 import 'package:emoji_manager/util/image_edit_util/image_picker_io.dart';
 import 'package:emoji_manager/util/icon_util/index.dart';
 import 'package:flutter/cupertino.dart';
@@ -67,7 +68,7 @@ class MakePage extends StatelessWidget{
               ),
               child: Text('表情包放大', style: TextStyle(fontSize: 24),),
               onPressed: () {
-
+                Get.to(()=>ZoomPage());
               },
             )
           ],
