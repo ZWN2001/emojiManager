@@ -28,7 +28,7 @@ class MakePage extends StatelessWidget{
                   side:BorderSide(color:Colors.amber) ,
                   minimumSize: Size(width*0.6, height/8),
                   shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(18.0),
+                  borderRadius: BorderRadius.circular(18.0),
                   ),
               ),
               child: Text('制作静态表情包', style: TextStyle(fontSize: 24),),

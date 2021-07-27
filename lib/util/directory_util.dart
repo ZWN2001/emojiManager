@@ -6,13 +6,7 @@ class DirectoryUtil {
 
   //创建文件夹
   Future createDir(String dirName) async {
-    Directory documentsDirectory = await getApplicationDocumentsDirectory();
-    String path;
-    if (dirName == "emojiManager") {
-      path = '${documentsDirectory.path}${Platform.pathSeparator}$dirName';
-    } else {
-      path = '${documentsDirectory.path}${Platform.pathSeparator}'+"emojiManager"+'${Platform.pathSeparator}$dirName';
-    }
+    String path = await getDirPath(dirName);
     var dir = Directory(path);
     var exist = dir.existsSync();
     if (exist) {
@@ -25,13 +19,7 @@ class DirectoryUtil {
 
   //遍历文件夹下文件
   Future dirList(String dirName) async {
-    Directory documentsDirectory = await getApplicationDocumentsDirectory();
-    String path;
-    if (dirName == "emojiManager") {
-      path = '${documentsDirectory.path}${Platform.pathSeparator}$dirName';
-    } else {
-      path = '${documentsDirectory.path}${Platform.pathSeparator}'+"emojiManager"+'${Platform.pathSeparator}$dirName';
-    }
+    String path = await getDirPath(dirName);
     Stream<FileSystemEntity> fileList = Directory(path).list(recursive: false);
     await for (FileSystemEntity fileSystemEntity in fileList) {
       print('......');
@@ -39,6 +27,13 @@ class DirectoryUtil {
       FileSystemEntityType type = FileSystemEntity.typeSync(fileSystemEntity.path);
       print(type);
     }
+  }
+
+  Future<String> getDirPath(String dirName) async {
+    Directory documentsDirectory = await getApplicationDocumentsDirectory();
+    return dirName == "emojiManager"
+        ? '${documentsDirectory.path}${Platform.pathSeparator}$dirName'
+        : '${documentsDirectory.path}${Platform.pathSeparator}'+"emojiManager"+'${Platform.pathSeparator}$dirName';
   }
 
 

@@ -1,10 +1,10 @@
+import 'dart:async';
 import 'dart:io';
 
-import 'package:emoji_manager/util/directory_util.dart';
-import 'package:emoji_manager/widget/dialog/text_field_dialog.dart';
+import 'package:emoji_manager/util/util.dart';
+import 'package:emoji_manager/widget/widget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:path_provider/path_provider.dart';
 
 class BankPage extends StatefulWidget{
   BankPageState createState() => new BankPageState();
@@ -20,10 +20,9 @@ class BankPageState extends State<BankPage> {
 
   _addPicAlbum() async {
     String albumName = _vc.text;
-    DirectoryUtil().createDir(albumName).then((value) {
-      DirectoryUtil().dirList(rootName);
-      _getDirList(rootName);
-    });
+    await DirectoryUtil().createDir(albumName);
+    DirectoryUtil().dirList(rootName);
+    _getDirList(rootName);
     _vc.clear();
     setState(() {
 
@@ -31,15 +30,7 @@ class BankPageState extends State<BankPage> {
   }
 
   Future _getDirList(String dirName) async {
-    Directory documentsDirectory = await getApplicationDocumentsDirectory();
-    String path;
-    if (dirName == "emojiManager") {
-      path = '${documentsDirectory.path}${Platform.pathSeparator}$dirName';
-    } else {
-      path = '${documentsDirectory.path}${Platform.pathSeparator}'+"emojiManager"+'${Platform.pathSeparator}$dirName';
-    }
-    var directory = Directory(path);
-    files = directory.listSync();
+    files = Directory(await DirectoryUtil().getDirPath(dirName)).listSync();
   }
 
 
@@ -182,13 +173,16 @@ class BankPageState extends State<BankPage> {
 
   //单个图集的封面
   Widget albumWidget(int index) {
-    return InkWell(
-      onTap: () {
-        //TODO:进入图集页面
-      },
-      onLongPress: () {
-        //TODO:进入多选，appBar改变
-      },
+    return Ink(
+      decoration: BoxDecoration(),
+      child: InkWell(
+        onTap: () {
+          //TODO:进入图集页面
+        },
+        onLongPress: () {
+          //TODO:进入多选，appBar改变
+        },
+      ),
     );
   }
 
