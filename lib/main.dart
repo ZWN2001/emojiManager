@@ -48,7 +48,6 @@ class _MyHomePageState extends State<MyHomePage> {
           body: pages[index],
 
           floatingActionButton: FloatingActionButton(
-            // elevation: 6.0,
             highlightElevation: 8.0,
             onPressed: () {
               onPageChanged(1);
