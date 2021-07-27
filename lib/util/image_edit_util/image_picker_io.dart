@@ -3,7 +3,7 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:flutter/cupertino.dart';
-import 'package:photo_manager/photo_manager.dart';
+// import 'package:photo_manager/photo_manager.dart';
 import 'package:wechat_assets_picker/wechat_assets_picker.dart';
 
 Future<Uint8List?> pickImage(BuildContext context) async {

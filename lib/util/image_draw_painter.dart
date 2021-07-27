@@ -30,6 +30,8 @@ class ScrawlPainter extends CustomPainter {
   }
 
   void paint(Canvas canvas, Size size) {
+    final rect = Rect.fromLTRB(0.0, 0.0, size.width, size.height);
+    canvas.clipRect(rect);
     if (isClear || points == null || points.length == 0) {
       return;
     }
