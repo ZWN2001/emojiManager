@@ -1,7 +1,16 @@
+
 import 'dart:typed_data';
+import 'dart:ui' as ui;
+import 'dart:ui';
+import 'dart:ui';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/services.dart';
 
 import 'package:emoji_manager/util/image_edit_util/image_picker_io.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
+import 'package:image_gallery_saver/image_gallery_saver.dart';
+
 
 class ZoomPage extends StatelessWidget {
 
@@ -19,16 +28,9 @@ class ZoomPicPage extends StatefulWidget {
 
 class _ZoomPicPageState extends State<ZoomPicPage> {
 
-  Image smallPic = Image.network(
-    'https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fimage.biaobaiju.com%2Fuploads%2F20180514%2F05%2F1526248503-ORhUjucmZk.jpg&refer=http%3A%2F%2Fimage.biaobaiju.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=jpeg?sec=1629800422&t=cea70e269918cee0244dcc76ef20454b',
-    fit: BoxFit.scaleDown,
-    width: 100,
-  );
-  Image bigPic = Image.network(
-    'https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fimage.biaobaiju.com%2Fuploads%2F20180514%2F05%2F1526248503-ORhUjucmZk.jpg&refer=http%3A%2F%2Fimage.biaobaiju.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=jpeg?sec=1629800422&t=cea70e269918cee0244dcc76ef20454b',
-    fit: BoxFit.scaleDown,
-    width: 200,
-  );
+  Image smallPic = Image.asset('assets/image.jpg',fit: BoxFit.scaleDown,width: 100,);
+  Image bigPic =Image.asset('assets/image.jpg',fit: BoxFit.scaleDown,width: 200,);
+  late Image pic,modifiedPic;
   TextEditingController _nameEditController = new TextEditingController();
   TextEditingController _keyWordEditController = new TextEditingController();
 
@@ -41,6 +43,8 @@ class _ZoomPicPageState extends State<ZoomPicPage> {
     final size =MediaQuery.of(context).size;
     final width =size.width;
     final height =size.height;
+    int? picWidth;
+    GlobalKey smallKey = GlobalKey(),bigKey = GlobalKey();
     Uint8List? _memoryImage;
 
     return Scaffold(
@@ -100,16 +104,42 @@ class _ZoomPicPageState extends State<ZoomPicPage> {
                                         if(result == "从相册选择照片"){
                                           _memoryImage = await pickImage(context);
 
-                                          setState(() {smallPic = Image.memory(
+
+                                          setState(() {
+                                            /*pic = Image.memory(
+                                              _memoryImage!,
+                                              fit: BoxFit.scaleDown,
+                                            );
+                                            pic.image.resolve(new ImageConfiguration()).addListener(
+                                                new ImageStreamListener((ImageInfo info, bool _) {
+                                                  picWidth = info.image.width;
+                                                  print(picWidth);
+                                                }));
+                                            modifiedPic = Image.memory(
+                                              _memoryImage!,
+                                              fit: BoxFit.scaleDown,
+                                              width: picWidth!*2,
+                                            );*/
+                                            smallPic = Image.memory(
                                             _memoryImage!,
                                             fit: BoxFit.scaleDown,
-                                            width: 100,
                                           );
-                                          bigPic = Image.memory(
-                                            _memoryImage!,
-                                            fit: BoxFit.scaleDown,
-                                            width: 200,
-                                          );
+                                            smallPic.image.resolve(new ImageConfiguration()).addListener(
+                                                new ImageStreamListener((ImageInfo info, bool _) {
+                                                  picWidth = info.image.width;
+                                                  print(picWidth);
+                                                  smallPic = Image.memory(
+                                                    _memoryImage!,
+                                                    fit: BoxFit.scaleDown,
+                                                    width: picWidth!/2,
+                                                  );
+                                                  bigPic = Image.memory(
+                                                    _memoryImage!,
+                                                    fit: BoxFit.scaleDown,
+                                                    width: picWidth!*2,
+                                                  );
+                                                }));
+
                                           });
                                         }
                                   },
@@ -128,22 +158,47 @@ class _ZoomPicPageState extends State<ZoomPicPage> {
                                   flex: 1,
                                   child: Row(
                                     mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
+                                    MainAxisAlignment.spaceEvenly,
                                     children: [
-                                      Text("before"),
-                                      Text("after"),
+                                      Text("before",
+                                      style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold),),
+                                      Text("after",style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold),),
                                     ],
                                   ),
                                 ),
                                 Expanded(
                                     flex: 4,
-                                    child: Row(
-                                      mainAxisAlignment:
-                                      MainAxisAlignment.spaceEvenly,
-                                      children: [
-                                       smallPic,
-                                        bigPic,
-                                      ],
+                                    child: SingleChildScrollView(
+                                      physics: ClampingScrollPhysics(),
+                                      scrollDirection: Axis.horizontal,
+                                      child: ConstrainedBox(
+                                        constraints: BoxConstraints(maxWidth: 3000),
+                                        child: SingleChildScrollView(
+                                          physics: ClampingScrollPhysics(),
+                                          scrollDirection: Axis.vertical,
+                                          child: ConstrainedBox(
+                                            constraints: BoxConstraints(maxHeight: 500),
+                                            child: Row(
+                                              mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                              children: [
+                                                RepaintBoundary(
+                                                    key: smallKey,
+                                                    child: Container(
+                                                      child: smallPic,)
+                                                ),
+                                                RepaintBoundary(
+                                                    key: bigKey,
+                                                    child: Container(
+                                                      margin: EdgeInsets.fromLTRB(20, 0, 0, 0),
+                                                      child: bigPic,)
+                                                )
+
+                                              ],
+                                            ),
+                                          ),
+                                        )
+                                      ),
                                     ))
                               ],
                             ),
@@ -202,9 +257,8 @@ class _ZoomPicPageState extends State<ZoomPicPage> {
                                     children: [
                                       FloatingActionButton.extended(
                                           label: new Text("  确定  "),
-                                        onPressed: () {
-
-
+                                        onPressed: () async{
+                                            saveImage(bigKey);
                                         },
                                           heroTag: 'second',
                                       ),
@@ -217,6 +271,19 @@ class _ZoomPicPageState extends State<ZoomPicPage> {
                 ),
               ))),
     );
+  }
+  /// 保存图片
+  static Future<void> saveImage(GlobalKey globalKey) async {
+    RenderRepaintBoundary boundary = globalKey.currentContext!.findRenderObject() as RenderRepaintBoundary;
+    ui.Image image = await boundary.toImage();
+    ByteData? byteData = await image.toByteData(format: ui.ImageByteFormat.png);
+    Uint8List pngBytes = byteData!.buffer.asUint8List();
+    final String? filePath =
+    await ImageSaver.save('image.jpg', pngBytes);
+
+    String msg = 'save image : $filePath';
+    print(msg);
+
   }
 
 
