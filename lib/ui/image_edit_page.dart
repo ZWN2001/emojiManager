@@ -34,6 +34,7 @@ class _ImageEditPageState extends State<ImageEditPage> {
   ];
   AspectRatioItem? _cropAspectRatio;
   bool _cropping = false;
+  Map _emojiInfo = Get.arguments;
 
   EditorCropLayerPainter? _cropLayerPainter;
 
@@ -46,8 +47,7 @@ class _ImageEditPageState extends State<ImageEditPage> {
 
   @override
   Widget build(BuildContext context) {
-    Map _emojiInfo=ModalRoute.of(context)!.settings.arguments as Map;
-    String _name=_emojiInfo['name'];
+    String _name = _emojiInfo['name'];
     String _keyWord=_emojiInfo['keyWord'];
     Uint8List?  _memoryImage=_emojiInfo['image'];
     return Scaffold(
@@ -217,7 +217,8 @@ class _ImageEditPageState extends State<ImageEditPage> {
       Uint8List? fileData;
       fileData = await cropImageDataWithNativeLibrary(state: editorKey.currentState!);
 
-      Get.to(()=>DrawlPage(),arguments: fileData);
+      _emojiInfo['image']=fileData;
+      Get.to(()=>DrawlPage(),arguments: _emojiInfo);
       // final String? filePath =
       // await ImageSaver.save('extended_image_cropped_image.jpg', fileData!);
       //

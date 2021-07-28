@@ -1,5 +1,7 @@
 
-import 'dart:io';
+import 'package:emoji_manager/modules/bank/pic_album_controller.dart';
+import 'package:emoji_manager/modules/bank/pic_album_screen.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:emoji_manager/util/util.dart';
@@ -15,20 +17,23 @@ class BankScreen extends GetView<BankController> {
     SizeConfig().init(context);
     return Scaffold(
       appBar: AppBar(
-        title: topLeftFirstWidget(),
+        title: Obx(() =>
+        controller.selectionMode.isFalse
+            ? topLeftFirstWidget()
+            : topLeftSecondWidget()),
         actions: [
-          topRightFirstWidget(context)
+          Obx(() => controller.selectionMode.isFalse
+              ? topRightFirstWidget(context)
+              : topRightSecondWidget(context))
         ],
       ),
-      body: Obx(() =>
-      controller.files.isEmpty
+      body: Obx(() => controller.files.isEmpty
           ? noDirText()
-          : albumGridView(context)
-      ),
+          : albumGridView(context))
     );
   }
 
-  //没有图集时的界面
+  ///没有图集时的界面
   Widget noDirText() {
     return Center(
       child: Column(
@@ -50,8 +55,8 @@ class BankScreen extends GetView<BankController> {
     );
   }
 
-  //有图集时的界面
-  Widget albumGridView(BuildContext context) {
+  ///有图集时的界面
+  /*Widget albumGridView(BuildContext context) {
     return RefreshIndicator(
       onRefresh: controller.onRefresh,
       child: GridView.builder(
@@ -70,14 +75,227 @@ class BankScreen extends GetView<BankController> {
             );
           }),
     );
+  }*/
+  Widget albumGridView(BuildContext context) {
+    return StaggeredGridView.countBuilder(
+      crossAxisCount: 3,
+      mainAxisSpacing: 4,
+      crossAxisSpacing: 4,
+      primary: false,
+      itemCount: controller.files.length,
+      itemBuilder: (BuildContext context, int index) => gridItem(index),
+      staggeredTileBuilder: (int index) => StaggeredTile.count(1, 1),
+      padding: EdgeInsets.all(4),
+    );
   }
 
-  //第一个appBar左边，文字“表情包库”
+  ///单个图集预览图
+  Widget gridItem(int index) {
+    String name = controller.files.elementAt(index).path.substring(
+        controller.files.elementAt(index).parent.path.length+1);
+    return Obx(() =>
+    controller.selectionMode.value
+        ? selectedAlbum(index, name)
+        : unselectedAlbum(index, name));
+    /*if (controller.selectionMode.value) {   ///如果已长按，显示多选效果
+      return GridTile(
+        header: GridTileBar(
+          leading: Obx(() =>
+          controller.selectedIndexList.contains(index)
+              ? controller.checkIcon
+              : controller.uncheckIcon
+          ),
+        ),
+        footer: Container(
+          width: SizeConfig().screenWidth / 3,
+          height: SizeConfig().screenWidth / 3 / 5,
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              stops: [0.1, 1],
+              colors: [
+                Colors.transparent,
+                Colors.black54
+              ]
+            ),
+          ),
+          child: Text(
+            name,
+            style: TextStyle(
+                fontSize: 20,
+                color: Colors.white),
+          ),
+        ),
+        child: GestureDetector(
+          child: Container(
+            width: SizeConfig().screenWidth / 3,
+            height: SizeConfig().screenWidth / 3,
+            child: Image.network(
+              controller.tempImageList[index],
+              fit: BoxFit.cover,
+            ),
+          ),
+          onLongPress: () {
+            controller.changeSelection(enable: false, index: -1);
+          },
+          onTap: () {
+            if (controller.selectedIndexList.contains(index)) {
+              controller.selectedIndexList.remove(index);
+            } else {
+              controller.selectedIndexList.add(index);
+            }
+          },
+        ),
+      );
+    } else {        ///如果未长按，显示默认效果
+      return GridTile(
+        footer: Container(
+          width: SizeConfig().screenWidth / 3,
+          height: SizeConfig().screenWidth / 3 / 5,
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+              gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  stops: [0.1, 1],
+                  colors: [
+                    Colors.transparent,
+                    Colors.black54
+                  ]
+              ),
+          ),
+          child: Text(
+            name,
+            style: TextStyle(
+                fontSize: 20,
+                color: Colors.white),
+          ),
+        ),
+        child: GestureDetector(
+          child: Container(
+            width: SizeConfig().screenWidth / 3,
+            height: SizeConfig().screenWidth / 3,
+            child: Image.network(
+              controller.tempImageList[index],
+              fit: BoxFit.cover,
+            ),
+          ),
+          onLongPress: () {
+            controller.changeSelection(enable: true, index: index);
+          },
+          onTap: () {
+
+          },
+        ),
+      );
+    }*/
+  }
+
+  Widget selectedAlbum(int index, String name) {
+    return GridTile(
+      header: GridTileBar(
+        leading: Obx(() =>
+        controller.selectedIndexList.contains(index)
+            ? controller.checkIcon
+            : controller.uncheckIcon
+        ),
+      ),
+      footer: Container(
+        width: SizeConfig().screenWidth / 3,
+        height: SizeConfig().screenWidth / 3 / 5,
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              stops: [0.1, 1],
+              colors: [
+                Colors.transparent,
+                Colors.black54
+              ]
+          ),
+        ),
+        child: Text(
+          name,
+          style: TextStyle(
+              fontSize: 20,
+              color: Colors.white),
+        ),
+      ),
+      child: GestureDetector(
+        child: Container(
+          width: SizeConfig().screenWidth / 3,
+          height: SizeConfig().screenWidth / 3,
+          child: Image.network(     //TODO: temp instance
+            controller.tempImageList[index],
+            fit: BoxFit.cover,
+          ),
+        ),
+        onLongPress: () {
+          controller.changeSelection(enable: false, index: -1);
+        },
+        onTap: () {
+          if (controller.selectedIndexList.contains(index)) {
+            controller.selectedIndexList.remove(index);
+          } else {
+            controller.selectedIndexList.add(index);
+          }
+        },
+      ),
+    );
+  }
+
+  Widget unselectedAlbum(int index, String name) {
+    return GridTile(
+      footer: Container(
+        width: SizeConfig().screenWidth / 3,
+        height: SizeConfig().screenWidth / 3 / 5,
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              stops: [0.1, 1],
+              colors: [
+                Colors.transparent,
+                Colors.black54
+              ]
+          ),
+        ),
+        child: Text(
+          name,
+          style: TextStyle(
+              fontSize: 20,
+              color: Colors.white),
+        ),
+      ),
+      child: GestureDetector(
+        child: Container(
+          width: SizeConfig().screenWidth / 3,
+          height: SizeConfig().screenWidth / 3,
+          child: Image.network(     //TODO: temp instance
+            controller.tempImageList[index],
+            fit: BoxFit.cover,
+          ),
+        ),
+        onLongPress: () {
+          controller.changeSelection(enable: true, index: index);
+        },
+        onTap: () {
+          Get.to(() => new PicAlbumScreen(),binding: PicAlbumBinding(name));
+        },
+      ),
+    );
+  }
+
+  ///第一个appBar左边，文字“表情包库”
   Widget topLeftFirstWidget() {
     return Text("表情包库");
   }
 
-  //第一个appBar右边，添加图集按钮
+  ///第一个appBar右边，添加图集按钮
   Widget topRightFirstWidget(BuildContext context) {
     return IconButton(
         onPressed: (){
@@ -101,22 +319,64 @@ class BankScreen extends GetView<BankController> {
     );
   }
 
-  //第二个appBar左边，全选Text
+  ///第二个appBar左边，取消按钮
   Widget topLeftSecondWidget() {
-    return InkWell(
-      child: Container(
-        padding: EdgeInsets.only(left: 10, right: 10, bottom: 10, top: 5),
-        child: Text("全选"),
-      ),
-      onTap: () {
-        //TODO:全选操作
+    return IconButton(
+      icon: Icon(Icons.clear),
+      onPressed: () {
+        controller.changeSelection(enable: false, index: -1);
       },
     );
   }
 
-  //第二个appBar右边，取消
+  ///第二个appBar右边，小列表，包括全选、重命名、删除
+  Widget topRightSecondWidget(BuildContext context) {
+    return PopupMenuButton(
+        itemBuilder: (BuildContext context) {
+          return [
+            PopupMenuItem(
+              enabled: controller.selectedIndexList.length
+                  == controller.files.length
+                  ? false : true,
+              child: Row(
+                children: [
+                  Padding(padding: EdgeInsets.only(right: 8),
+                      child: Icon(Icons.check_circle,color: Colors.black87,)),
+                  Text("全选")
+                ],
+              ),
+              value: 'all_select',
+            ),
+            PopupMenuItem(
+              enabled: controller.selectedIndexList.length > 1 ? false : true,
+              child: Row(
+                children: [
+                  Padding(padding: EdgeInsets.only(right: 8),
+                      child: Icon(Icons.drive_file_rename_outline,color: Colors.black87,)),
+                  Text("重命名")
+                ],
+              ),
+              value: 'rename',
+            ),
+            PopupMenuItem(
+              child: Row(
+                children: [
+                  Padding(padding: EdgeInsets.only(right: 8),
+                      child: Icon(Icons.delete,color: Colors.black87,)),
+                  Text("删除")
+                ],
+              ),
+              value: 'delete',
+            ),
+          ];
+        },
+      onSelected: (String str) {
+          controller.popMenuItemSelection(str, context);
+      },
+    );
+  }
 
-  //单个图集的封面
+ /* //单个图集的封面
   Widget albumWidget(int index, BuildContext context) {
     return Padding(
       padding: EdgeInsets.all(5.0),
@@ -125,10 +385,10 @@ class BankScreen extends GetView<BankController> {
         ),
         child: InkWell(
           onTap: () {
-            //TODO:进入图集页面
+
           },
           onLongPress: () {
-            //TODO:进入多选，appBar改变
+
           },
           child: Card(
             elevation: 5,
@@ -189,6 +449,6 @@ class BankScreen extends GetView<BankController> {
         ),
       ),
     );
-  }
+  }*/
 
 }

@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:typed_data';
+import 'package:emoji_manager/util/image_edit_util/asperct_raio_image.dart';
 import 'package:emoji_manager/util/image_edit_util/image_picker_io.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -19,7 +20,8 @@ class _DrawlState extends State<DrawlPage> {
     Colors.greenAccent,
   ];
   static final List<double> lineWidths = [5.0, 8.0, 10.0];
-  late Uint8List _imageFile=Get.arguments as Uint8List;
+  Map _emojiInfo = Get.arguments;
+  late Uint8List _imageFile;
   late Image _emojiImage=Image.memory(_imageFile);
   int selectedLine = 0;
   Color selectedColor = colors[0];
@@ -37,16 +39,14 @@ class _DrawlState extends State<DrawlPage> {
 
   @override
   Widget build(BuildContext context) {
+    _imageFile=_emojiInfo['image'];
     return Scaffold(
         appBar: AppBar(title:Text('表情包涂鸦')),
         body: Container(
           child: Column(
             children: <Widget>[
-              Expanded(
-                // child: Container(
-                //   color: Colors.white,
-                  // margin: EdgeInsets.all(0.0),
-                  child: RepaintBoundary(
+              Expanded(child: SizedBox()),
+                  RepaintBoundary(
                     key: _repaintKey,
                     child: Stack(
                       alignment: Alignment.center,
@@ -62,8 +62,7 @@ class _DrawlState extends State<DrawlPage> {
                       ],
                     ),
                   ),
-                // ),
-              ),
+                Expanded(child: SizedBox()),
               _buildBottom(),
             ],
           ),
@@ -73,15 +72,19 @@ class _DrawlState extends State<DrawlPage> {
 
   Widget _buildCanvas() {
     return StatefulBuilder(builder: (context, state) {
-      return CustomPaint(
-        foregroundPainter: ScrawlPainter(
-          points: points,
-          strokeColor: selectedColor,
-          strokeWidth: strokeWidth,
-          isClear: isClear,
-        ),
-        child: GestureDetector(
-          child: _emojiImage,
+      return AsperctRaioImage.memory(
+          _imageFile,
+          memoryBuilder:  (context, snapshot, url){
+        return CustomPaint(
+          size: Size(snapshot.data!.width.toDouble(),snapshot.data!.height.toDouble()),
+          foregroundPainter: ScrawlPainter(
+            points: points,
+            strokeColor: selectedColor,
+            strokeWidth: strokeWidth,
+            isClear: isClear,
+          ),
+          child: GestureDetector(
+            // child: _emojiImage,
             onPanStart: (details) {
               isClear = false;
               points[curFrame].color = selectedColor;
@@ -101,7 +104,10 @@ class _DrawlState extends State<DrawlPage> {
               curFrame++;
             },
           ) ,
+        );
+          }
       );
+
     });
   }
 
@@ -230,8 +236,8 @@ class _DrawlState extends State<DrawlPage> {
       ByteData? byteData = await image.toByteData(format: ui.ImageByteFormat.png);
       Uint8List pngBytes = byteData!.buffer.asUint8List();
       final String? filePath =
-      await ImageSaver.save('image.jpg', pngBytes);
-
+      await ImageSaver.save('${_emojiInfo['name']}?${_emojiInfo['keyWord']}.png', pngBytes);
+      //TODO 向数据库存数据
       String msg = 'save image : $filePath';
       print(msg);
   }

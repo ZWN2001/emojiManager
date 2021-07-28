@@ -1,3 +1,4 @@
+
 import 'dart:io';
 
 import 'package:path_provider/path_provider.dart';
@@ -17,6 +18,13 @@ class DirectoryUtil {
     }
   }
 
+  Future getDirPath (String dirName) async {
+    Directory documentsDirectory = await getApplicationDocumentsDirectory();
+    return dirName == 'emojiManager'
+        ? '${documentsDirectory.path}${Platform.pathSeparator}$dirName'
+        : '${documentsDirectory.path}${Platform.pathSeparator}'+"emojiManager"+'${Platform.pathSeparator}$dirName';
+  }
+
   //遍历文件夹下文件
   Future dirList(String dirName) async {
     String path = await getDirPath(dirName);
@@ -29,11 +37,19 @@ class DirectoryUtil {
     }
   }
 
-  Future<String> getDirPath(String dirName) async {
-    Directory documentsDirectory = await getApplicationDocumentsDirectory();
-    return dirName == "emojiManager"
-        ? '${documentsDirectory.path}${Platform.pathSeparator}$dirName'
-        : '${documentsDirectory.path}${Platform.pathSeparator}'+"emojiManager"+'${Platform.pathSeparator}$dirName';
+  //文件夹重命名
+  Future dirRename(String oldName, String newName) async {
+    String path = await getDirPath(oldName);
+    var dir = Directory(path);
+    var dir3= await dir.rename('${dir.parent.absolute.path}${Platform.pathSeparator}$newName');
+    print(dir3);
+  }
+
+  //文件夹删除
+Future deleteDir(String dirName) async {
+  String path = await getDirPath(dirName);
+  await Directory(path).delete();
+  print('delete');
   }
 
 
