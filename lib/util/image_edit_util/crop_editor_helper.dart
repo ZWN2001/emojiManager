@@ -1,6 +1,5 @@
 import 'dart:typed_data';
 import 'dart:ui';
-import 'package:http_client_helper/http_client_helper.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:image_editor/image_editor.dart';
 
@@ -41,21 +40,3 @@ Future<Uint8List?> cropImageDataWithNativeLibrary(
   return result;
 }
 
-/// it may be failed, due to Cross-domain
-Future<Uint8List> _loadNetwork(ExtendedNetworkImageProvider key) async {
-  try {
-    final Response? response = await HttpClientHelper.get(Uri.parse(key.url),
-        headers: key.headers,
-        timeLimit: key.timeLimit,
-        timeRetry: key.timeRetry,
-        retries: key.retries,
-        cancelToken: key.cancelToken);
-    return response!.bodyBytes;
-  } on OperationCanceledError catch (_) {
-    print('User cancel request ${key.url}.');
-    return Future<Uint8List>.error(
-        StateError('User cancel request ${key.url}.'));
-  } catch (e) {
-    return Future<Uint8List>.error(StateError('failed load ${key.url}. \n $e'));
-  }
-}

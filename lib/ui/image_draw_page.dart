@@ -1,7 +1,11 @@
+import 'dart:async';
 import 'dart:typed_data';
+import 'package:emoji_manager/util/image_edit_util/image_picker_io.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:emoji_manager/util/image_draw_painter.dart';
+import 'package:get/get.dart';
+import 'dart:ui' as ui;
 
 class DrawlPage extends StatefulWidget {
   @override
@@ -15,42 +19,39 @@ class _DrawlState extends State<DrawlPage> {
     Colors.greenAccent,
   ];
   static final List<double> lineWidths = [5.0, 8.0, 10.0];
-  late Uint8List _imageFile;
-  late Image _emojiImage;
+  late Uint8List _imageFile=Get.arguments as Uint8List;
+  late Image _emojiImage=Image.memory(_imageFile);
   int selectedLine = 0;
   Color selectedColor = colors[0];
   List<Point> points = [Point(colors[0], lineWidths[0], [])];
   int curFrame = 0;
   bool isClear = false;
-
-  // final GlobalKey _repaintKey = new GlobalKey();
+  final GlobalKey _repaintKey = new GlobalKey();
 
   double get strokeWidth => lineWidths[selectedLine];
 
   @override
-  void initState() {
+  void initState()  {
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    _imageFile=ModalRoute.of(context)!.settings.arguments as Uint8List;
-    _emojiImage=Image.memory(_imageFile);
     return Scaffold(
         appBar: AppBar(title:Text('表情包涂鸦')),
         body: Container(
           child: Column(
             children: <Widget>[
               Expanded(
-                child: Container(
-                  color: Colors.white,
-                  margin: EdgeInsets.all(12.0),
-                  // child: RepaintBoundary(
-                  //   key: _repaintKey,
-                    child:
-                    // Stack(
-                      // alignment: Alignment.center,
-                      // children: <Widget>[
+                // child: Container(
+                //   color: Colors.white,
+                  // margin: EdgeInsets.all(0.0),
+                  child: RepaintBoundary(
+                    key: _repaintKey,
+                    child: Stack(
+                      alignment: Alignment.center,
+                      children: <Widget>[
+                        _emojiImage,
                         Positioned(
                           child: _buildCanvas(),
                           top: 0.0,
@@ -58,10 +59,10 @@ class _DrawlState extends State<DrawlPage> {
                           left: 0.0,
                           right: 0.0,
                         ),
-                      // ],
-                    // ),
-                  // ),
-                ),
+                      ],
+                    ),
+                  ),
+                // ),
               ),
               _buildBottom(),
             ],
@@ -81,26 +82,25 @@ class _DrawlState extends State<DrawlPage> {
         ),
         child: GestureDetector(
           child: _emojiImage,
-          // child: Opacity(child: _emojiImage,opacity: 0.0,),
-          onPanStart: (details) {
-            isClear = false;
-            points[curFrame].color = selectedColor;
-            points[curFrame].strokeWidth = strokeWidth;
-          },
-          onPanUpdate: (details) {
-            RenderBox referenceBox = context.findRenderObject() as RenderBox;
-            Offset localPosition =
-                referenceBox.globalToLocal(details.globalPosition);
-            state(() {
-              points[curFrame].points.add(localPosition);
-            });
-          },
-          onPanEnd: (details) {
-            // preparing for next line painting.
-            points.add(Point(selectedColor, strokeWidth, []));
-            curFrame++;
-          },
-        ),
+            onPanStart: (details) {
+              isClear = false;
+              points[curFrame].color = selectedColor;
+              points[curFrame].strokeWidth = strokeWidth;
+            },
+            onPanUpdate: (details) {
+              RenderBox referenceBox = context.findRenderObject() as RenderBox;
+              Offset localPosition =
+              referenceBox.globalToLocal(details.globalPosition);
+              state(() {
+                points[curFrame].points.add(localPosition);
+              });
+            },
+            onPanEnd: (details) {
+              // preparing for next line painting.
+              points.add(Point(selectedColor, strokeWidth, []));
+              curFrame++;
+            },
+          ) ,
       );
     });
   }
@@ -213,36 +213,28 @@ class _DrawlState extends State<DrawlPage> {
             ),
             GestureDetector(
               child: Text('保存'),
-              onTap: () {
-                // RenderRepaintBoundary boundary =
-                //     _repaintKey.currentContext!.findRenderObject() as RenderRepaintBoundary;
-                // _saveEmoji(boundary);
-              },
+              onTap: ()  async{
+                RenderRepaintBoundary boundary =
+                _repaintKey.currentContext!.findRenderObject() as RenderRepaintBoundary;
+                _saveEmoji(boundary);
+                },
             ),
           ],
         );
       }),
     );
   }
-  // Future _saveEmoji(RenderRepaintBoundary boundary) async {
-  //   _capturePng(boundary).then((unit8List) async {
-  //     if (unit8List.length == 0) {
-  //       return;
-  //     }
-  //     final String? filePath =
-  //     await ImageSaver.save('extended_image_cropped_image.jpg', unit8List);
-  //
-  //     String msg = 'save image : $filePath';
-  //     print(msg);
-  //   });
-  // }
-  // Future<Uint8List> _capturePng(RenderRepaintBoundary boundary) async {
-  //   ui.Image image =
-  //   await boundary.toImage(pixelRatio: ui.window.devicePixelRatio);
-  //   ByteData? byteData = await image.toByteData(format: ui.ImageByteFormat.png);
-  //   Uint8List pngBytes = byteData!.buffer.asUint8List();
-  //   return pngBytes;
-  // }
+
+  Future _saveEmoji(RenderRepaintBoundary boundary) async {
+      ui.Image image = await boundary.toImage();
+      ByteData? byteData = await image.toByteData(format: ui.ImageByteFormat.png);
+      Uint8List pngBytes = byteData!.buffer.asUint8List();
+      final String? filePath =
+      await ImageSaver.save('image.jpg', pngBytes);
+
+      String msg = 'save image : $filePath';
+      print(msg);
+  }
 
   void reset() {
     isClear = true;
