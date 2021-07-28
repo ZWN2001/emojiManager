@@ -27,7 +27,11 @@ dependencies:
   extended_image: ^4.1.0
   image_editor: 1.0.0
   wechat_assets_picker: 5.5.8
+
   photo_manager: 1.2.7
+  image_gallery_saver: ^1.5.0
+  cached_network_image: ^2.0.0
+  permission_handler: '^4.2.0+hotfix.2'
 
   get: ^4.2.4
   fluttertoast: ^8.0.7
