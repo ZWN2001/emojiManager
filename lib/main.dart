@@ -1,3 +1,4 @@
+
 import 'package:emoji_manager/ui/ui.dart';
 import 'package:emoji_manager/util/util.dart';
 import 'package:flutter/material.dart';
@@ -6,6 +7,10 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:get/get_navigation/src/routes/get_route.dart';
 import 'package:emoji_manager/modules/modules.dart';
+
+import 'modules/image_edit/image_edit_view.dart';
+import 'modules/static_emoji_info/static_emoji_view.dart';
+
 
 void main() => runApp(MyApp());
 
@@ -17,7 +22,7 @@ class MyApp extends StatelessWidget {
       getPages: [
         GetPage(name: '/', page: () => MyHomePage(), binding: BankBinding()),
         GetPage(name: '/ImageEditPage', page:()=>ImageEditPage()),
-        GetPage(name: '/StaticEmojiInfo', page:()=>StaticEmojiInfo()),
+        GetPage(name: '/StaticEmojiInfo', page:()=>StaticEmojiInfoPage()),
       ],
       theme: ThemeData(primarySwatch: Colors.deepOrange),
     );
