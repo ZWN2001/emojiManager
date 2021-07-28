@@ -1,4 +1,7 @@
 
+import 'package:emoji_manager/modules/image_draw/image_draw_logic.dart';
+import 'package:emoji_manager/modules/image_edit/image_edit_logic.dart';
+import 'package:emoji_manager/modules/static_emoji_info/static_emoji_logic.dart';
 import 'package:emoji_manager/ui/ui.dart';
 import 'package:emoji_manager/util/util.dart';
 import 'package:flutter/material.dart';
@@ -8,6 +11,7 @@ import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:get/get_navigation/src/routes/get_route.dart';
 import 'package:emoji_manager/modules/modules.dart';
 
+import 'modules/image_draw/image_draw_view.dart';
 import 'modules/image_edit/image_edit_view.dart';
 import 'modules/static_emoji_info/static_emoji_view.dart';
 
@@ -21,8 +25,9 @@ class MyApp extends StatelessWidget {
       initialRoute: '/',
       getPages: [
         GetPage(name: '/', page: () => MyHomePage(), binding: BankBinding()),
-        GetPage(name: '/ImageEditPage', page:()=>ImageEditPage()),
-        GetPage(name: '/StaticEmojiInfo', page:()=>StaticEmojiInfoPage()),
+        GetPage(name: '/ImageEditPage', page:()=>ImageEditPage(),binding: ImageEditBindings()),
+        GetPage(name: '/ImageDrawPage', page: ()=>ImageDrawPage(),binding: ImageDrawBinding()),
+        GetPage(name: '/StaticEmojiInfo', page:()=>StaticEmojiInfoPage(),binding: StaticEmojiInfoBinding()),
       ],
       theme: ThemeData(primarySwatch: Colors.deepOrange),
     );

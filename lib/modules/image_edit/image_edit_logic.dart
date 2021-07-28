@@ -44,7 +44,7 @@ class ImageEditLogic extends GetxController {
       Uint8List? fileData;
       fileData = await cropImageDataWithNativeLibrary(state: editorKey.currentState!);
       emojiInfo['image']=fileData;
-      Get.to(()=>ImageDrawPage(),arguments: emojiInfo);
+      Get.toNamed('/ImageDrawPage',arguments: emojiInfo);
     } catch (e, stack) {
       msg = 'save failed: $e\n $stack';
       print(msg);
@@ -52,7 +52,7 @@ class ImageEditLogic extends GetxController {
     cropping = false;
   }
 }
-class ImageEditLogicBindings extends Bindings {
+class ImageEditBindings extends Bindings {
   @override
   void dependencies() {
     Get.lazyPut<ImageEditLogic>(() => ImageEditLogic());
