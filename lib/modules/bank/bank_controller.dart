@@ -11,7 +11,7 @@ import 'package:path_provider/path_provider.dart';
 
 class BankController extends GetxController{
 
-  final String dbName = 'emojiManager13.db';
+  final String dbName = 'emojiManager';
   final String tableName = 'directory_name';
   final String createDbSql = "CREATE TABLE directory_name (dirName TEXT PRIMARY KEY)";
   final String rootName = "emojiManager";
@@ -47,7 +47,6 @@ class BankController extends GetxController{
     await SqliteUtil().insert(dbName, sql, [albumName]).then((value) {
       getDirList1();
     });
-    //getDirList(rootName);
     addTc.clear();
   }
 
@@ -73,8 +72,6 @@ class BankController extends GetxController{
     list.forEach((element) {
       dirNameList.add(element['dirName']);
     });
-    //List<String> temp = list[0]['dirName'].toString().split(',');
-    //dirNameList.value = temp;
   }
 
   Future getPicPathList() async {
@@ -125,15 +122,6 @@ class BankController extends GetxController{
                     print(renameTc.text);
                     print(dirNameList[i]);
                     String sql = "UPDATE directory_name SET dirName = ? WHERE dirName = ?";
-                    /*await SqliteUtil().update(dbName, sql, [renameTc.text, dirNameList[i]]).then((value) {
-                      DirectoryUtil().dirRename(
-                          dirNameList[i], renameTc.text).then((value) {
-                            //dirNameList[i] = renameTc.text;
-                            getDirList1().then((value) {
-                              changeSelection(enable: false, index: -1);
-                        });
-                      });
-                    });*/
                     String newName = renameTc.text;
                     await DirectoryUtil().dirRename(dirNameList[i], newName).then((value) {
                       print('success!');
@@ -182,15 +170,7 @@ class BankController extends GetxController{
   @override
   void onInit() {
     super.onInit();
-    // DirectoryUtil().deleteDir("b");
-    // DirectoryUtil().deleteDir("a");
-    // DirectoryUtil().deleteDir("A");
-    // DirectoryUtil().deleteDir("B");
-    //String sql = "DELETE directory_name WHERE dirName = ?";
-    //DirectoryUtil().createDir("b");
     SqliteUtil().createDb(createDbSql, dbName);
-    //SqliteUtil().deleteDb('emojiManager2');
-    //SqliteUtil().delete(dbName, sql, ['b']);
     DirectoryUtil().dirList(rootName).then((value) {
       getDirList1().then((value) {
         getPicPathList();

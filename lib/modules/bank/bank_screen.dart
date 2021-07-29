@@ -1,6 +1,5 @@
 
 import 'dart:io';
-import 'dart:ui';
 
 import 'package:emoji_manager/modules/bank/pic_album_controller.dart';
 import 'package:emoji_manager/modules/bank/pic_album_screen.dart';
@@ -233,10 +232,6 @@ class BankScreen extends GetView<BankController> {
           child: controller.hasFirstPicList[index]
               ? Image(image: FileImage(File(controller.firstPicPathList[index])),fit: BoxFit.cover,)
               : Image.network( 'https://www.itying.com/images/flutter/4.png',fit: BoxFit.cover),
-          /*Image.network(     //TODO: temp instance
-            controller.tempImageList[index],
-            fit: BoxFit.cover,
-          ),*/
         ),
         onLongPress: () {
           controller.changeSelection(enable: false, index: -1);
@@ -283,10 +278,6 @@ class BankScreen extends GetView<BankController> {
           child: controller.hasFirstPicList[index]
               ? Image(image: FileImage(File(controller.firstPicPathList[index])),fit: BoxFit.cover,)
               : Image.network( 'https://www.itying.com/images/flutter/4.png',fit: BoxFit.cover),
-          /*Image.network(     //TODO: temp instance
-            controller.tempImageList[index],
-            fit: BoxFit.cover,
-          ),*/
         ),
         onLongPress: () {
           controller.changeSelection(enable: true, index: index);
