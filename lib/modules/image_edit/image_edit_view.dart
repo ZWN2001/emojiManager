@@ -14,8 +14,8 @@ class ImageEditPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     String _name = imageEditLogic.emojiInfo['name'];
-    String _keyWord=imageEditLogic.emojiInfo['keyWord'];
-    Uint8List?  _memoryImage=imageEditLogic.emojiInfo['image'];
+    String _keyWord = imageEditLogic.emojiInfo['keyWord'];
+    Uint8List? _memoryImage = imageEditLogic.emojiInfo['image'];
     return Scaffold(
       appBar: AppBar(
         title: const Text('表情包编辑'),
@@ -32,9 +32,9 @@ class ImageEditPage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             SizedBox(height: 30,),
-            Text('    名称 :  $_name',style: TextStyle(fontSize: 20),),
+            Text('    名称 :  $_name', style: TextStyle(fontSize: 20),),
             SizedBox(height: 5,),
-            Text('    关键词 :  $_keyWord',style: TextStyle(fontSize: 20),),
+            Text('    关键词 :  $_keyWord', style: TextStyle(fontSize: 20),),
             _imageWidget(_memoryImage)
           ]
       ),
@@ -42,29 +42,32 @@ class ImageEditPage extends StatelessWidget {
     );
   }
 
-  Widget _imageWidget( Uint8List?  _memoryImage){
-    return  Expanded(
-        child:ExtendedImage.memory(
-          _memoryImage!,
-          fit: BoxFit.contain,
-          mode: ExtendedImageMode.editor,
-          enableLoadState: true,
-          extendedImageEditorKey: imageEditLogic.editorKey,
-          initEditorConfigHandler: (ExtendedImageState? state) {
-            return EditorConfig(
-              maxScale: 8.0,
-              cropRectPadding: const EdgeInsets.fromLTRB(20, 0, 20, 30),
-              hitTestSize: 20.0,
-              cropLayerPainter: imageEditLogic.cropLayerPainter!,
-              initCropRectType: InitCropRectType.imageRect,
-              cropAspectRatio: imageEditLogic.cropAspectRatio.value.value,
+  Widget _imageWidget(Uint8List? _memoryImage) {
+    return Expanded(
+        child: GetBuilder<ImageEditLogic>(
+          builder: (logic) {
+            return ExtendedImage.memory(
+              _memoryImage!,
+              fit: BoxFit.contain,
+              mode: ExtendedImageMode.editor,
+              enableLoadState: true,
+              extendedImageEditorKey: imageEditLogic.editorKey,
+              initEditorConfigHandler: (ExtendedImageState? state) =>
+                  EditorConfig(
+                    maxScale: 8.0,
+                    cropRectPadding: const EdgeInsets.fromLTRB(20, 0, 20, 30),
+                    hitTestSize: 20.0,
+                    cropLayerPainter: imageEditLogic.cropLayerPainter!,
+                    initCropRectType: InitCropRectType.imageRect,
+                    cropAspectRatio: imageEditLogic.cropAspectRatio.value,
+                  ),
+              cacheRawData: true,
             );
           },
-          cacheRawData: true,
-        )
-    );
+        ));
   }
-  Widget _bottomAppBar(BuildContext context){
+
+  Widget _bottomAppBar(BuildContext context) {
     return BottomAppBar(
       //color: Colors.lightBlue,
       shape: const CircularNotchedRectangle(),
@@ -84,7 +87,7 @@ class ImageEditPage extends StatelessWidget {
               textColor: Colors.white,
               onPressed: () {
                 showDialog<void>(
-                  context: context,
+                    context: context,
                     builder: (BuildContext context) {
                       return Column(
                         children: <Widget>[
@@ -101,15 +104,16 @@ class ImageEditPage extends StatelessWidget {
                                 final AspectRatioItem item =
                                 imageEditLogic.cropAspectRatios.elementAt(index);
                                 return GestureDetector(
-                                child: AspectRatioWidget(
-                                aspectRatio: item.value,
-                                aspectRatioS: item.text,
-                                isSelected: item == imageEditLogic.cropAspectRatio.value,
-                                ),
-                                onTap: () {
-                                imageEditLogic.cropAspectRatio=item.obs;
-                                Navigator.pop(context);
-                                },
+                                  child: AspectRatioWidget(
+                                    aspectRatio: item.value,
+                                    aspectRatioS: item.text,
+                                    isSelected: item ==
+                                        imageEditLogic.cropAspectRatio,
+                                  ),
+                                  onTap: () {
+                                    imageEditLogic.changeCropAspectRatio(item);
+                                    Navigator.pop(context);
+                                  },
                                 );
                               },
                               itemCount: imageEditLogic.cropAspectRatios.length,

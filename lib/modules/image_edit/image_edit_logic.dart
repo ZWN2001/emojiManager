@@ -22,7 +22,7 @@ class ImageEditLogic extends GetxController {
     AspectRatioItem(text: '16*9', value: CropAspectRatios.ratio16_9),
     AspectRatioItem(text: '9*16', value: CropAspectRatios.ratio9_16)
   ];
-  late Rx<AspectRatioItem> cropAspectRatio;
+  late AspectRatioItem cropAspectRatio;
   bool cropping = false;
   Map emojiInfo = Get.arguments;
   EditorCropLayerPainter? cropLayerPainter;
@@ -30,8 +30,12 @@ class ImageEditLogic extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    cropAspectRatio = cropAspectRatios.elementAt(0).obs ;
+    cropAspectRatio = cropAspectRatios.elementAt(0) ;
     cropLayerPainter = const EditorCropLayerPainter();
+  }
+  void changeCropAspectRatio(AspectRatioItem item){
+    cropAspectRatio = item;
+    update();
   }
 
   Future<void> cropImage() async {
