@@ -32,23 +32,41 @@ class ScrawlPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     final rect = Rect.fromLTRB(0.0, 0.0, size.width, size.height);
     canvas.clipRect(rect);
-    if (isClear || points == null || points.length == 0) {
+    if (isClear || points.length == 0) {
       return;
     }
     for (int i = 0; i < points.length; i++) {
       _linePaint..color = points[i].color;
       _linePaint..strokeWidth = points[i].strokeWidth;
       List<Offset> curPoints = points[i].points;
-      if (curPoints == null || curPoints.length == 0) {
+      if (curPoints.length == 0) {
         break;
       }
       for (int i = 0; i < curPoints.length - 1; i++) {
-        if (curPoints[i] != null && curPoints[i + 1] != null)
-          canvas.drawLine(curPoints[i], curPoints[i + 1], _linePaint);
-//      canvas.drawPoints(PointMode.polygon, curPoints, _linePaint);
+        canvas.drawLine(curPoints[i], curPoints[i + 1], _linePaint);
       }
     }
   }
 
   bool shouldRepaint(ScrawlPainter other) => true;
+}
+
+class BorderPainter extends CustomPainter {
+  Paint _paint = Paint()
+    ..color = Colors.blue
+    ..strokeWidth = 1.5
+    ..style = PaintingStyle.stroke;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final rect = Rect.fromLTRB(0.0, 0.0, size.width, size.height);
+    canvas.clipRect(rect);
+    Rect rectFromCenter =
+    Rect.fromCenter(center: Offset(0, 0), width: 160, height: 160);
+    canvas.drawRRect(RRect.fromRectXY(rectFromCenter, 10, 10), _paint);
+
+  }
+
+  @override
+  bool shouldRepaint(CustomPainter oldDelegate) => true;
 }

@@ -1,50 +1,75 @@
+import 'package:emoji_manager/util/icon_util/antd_icons.dart';
 import 'package:emoji_manager/util/image_draw_painter.dart';
 import 'package:emoji_manager/util/image_edit_util/asperct_raio_image.dart';
+import 'package:emoji_manager/widget/flat_button_with_icon.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:get/get.dart';
 
 import 'image_draw_logic.dart';
 
-
 class ImageDrawPage extends StatelessWidget {
   final imageDrawLogic = Get.put(ImageDrawLogic());
 
   @override
   Widget build(BuildContext context) {
-    imageDrawLogic.imageFile=imageDrawLogic.emojiInfo['image'];
-    imageDrawLogic.emojiImage=Image.memory(imageDrawLogic.imageFile);
+    imageDrawLogic.drawStack.children.add(imageDrawLogic.emojiImage,);
+    // imageDrawLogic.drawStack.children.add(Positioned(
+    //   child: _buildWordCanvas(),
+    //   top: 0.0,
+    //   bottom: 0.0,
+    //   left: 0.0,
+    //   right: 0.0,
+    // ));
+    imageDrawLogic.drawStack.children.add(Positioned(
+      child: _buildDrawCanvas(),
+      top: 0.0,
+      bottom: 0.0,
+      left: 0.0,
+      right: 0.0,
+    ));
     return Scaffold(
-      appBar: AppBar(title:Text('表情包涂鸦')),
+      appBar: AppBar(
+        title:Text('表情包涂鸦'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.restore),
+            onPressed: () {
+              imageDrawLogic.reset();
+            },
+          ),
+          IconButton(
+            icon: const Icon(Icons.done),
+            onPressed: () {
+              RenderRepaintBoundary boundary =
+              imageDrawLogic.repaintKey.currentContext!.findRenderObject() as RenderRepaintBoundary;
+              imageDrawLogic.saveEmoji(boundary);
+            },
+          ),
+        ],
+      ),
       body: Container(
-        child: Column(
-          children: <Widget>[
-            Expanded(child: SizedBox()),
-            RepaintBoundary(
-              key: imageDrawLogic.repaintKey,
-              child: Stack(
-                alignment: Alignment.center,
-                children: <Widget>[
-                  imageDrawLogic.emojiImage,
-                  Positioned(
-                    child: _buildCanvas(),
-                    top: 0.0,
-                    bottom: 0.0,
-                    left: 0.0,
-                    right: 0.0,
-                  ),
-                ],
-              ),
-            ),
-            Expanded(child: SizedBox()),
-            _buildBottom(),
-          ],
+        child: GetBuilder<ImageDrawLogic>(
+          builder: (logic) {
+            return  Column(
+              children: <Widget>[
+                Expanded(child: SizedBox()),
+                RepaintBoundary(
+                  key: imageDrawLogic.repaintKey,
+                  child: imageDrawLogic.drawStack,
+                ),
+                Expanded(child: SizedBox()),
+                Obx(()=>imageDrawLogic.isDraw.value?_buildDrawBottom():_buildWordBottom())
+
+              ],
+            );
+          },
         ),
       ),
     );
   }
 
-  Widget _buildCanvas() {
+  Widget _buildDrawCanvas() {
     return StatefulBuilder(builder: (context, state) {
       return AsperctRaioImage.memory(
           imageDrawLogic.imageFile,
@@ -58,7 +83,6 @@ class ImageDrawPage extends StatelessWidget {
                 isClear: imageDrawLogic.isClear,
               ),
               child: GestureDetector(
-                // child: _emojiImage,
                 onPanStart: (details) {
                   imageDrawLogic.isClear = false;
                   imageDrawLogic.points[imageDrawLogic.curFrame].color
@@ -75,7 +99,7 @@ class ImageDrawPage extends StatelessWidget {
                   });
                 },
                 onPanEnd: (details) {
-                  // preparing for next line painting.
+                  //准备下次绘制
                   imageDrawLogic.points.add(
                       Point(imageDrawLogic.selectedColor, imageDrawLogic.strokeWidth, [])
                   );
@@ -85,18 +109,28 @@ class ImageDrawPage extends StatelessWidget {
             );
           }
       );
-
     });
   }
 
-  Widget _buildBottom() {
+  Widget _buildDrawBottom() {
     return Container(
       color: Colors.white,
-      padding: EdgeInsets.only(top: 15.0, bottom: 15.0),
+      padding: EdgeInsets.only(top: 0, bottom: 0),
       child: StatefulBuilder(builder: (context, state) {
         return Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: <Widget>[
+            FlatButtonWithIcon(
+              icon: const Icon(AntdIcons.fontColors),
+              label: const Text(
+                '文字',
+                style: TextStyle(fontSize: 10.0),
+              ),
+              textColor: Colors.black,
+              onPressed: () {
+                imageDrawLogic.isDraw.value=false;
+              },
+            ),
             GestureDetector(
               child: Icon(
                 Icons.brightness_1,
@@ -188,17 +222,107 @@ class ImageDrawPage extends StatelessWidget {
               },
             ),
             GestureDetector(
-              child: Text('清除痕迹'),
+              child: Container(
+                color: imageDrawLogic.selectedColor == ImageDrawLogic.colors[3]
+                    ? Colors.grey.withOpacity(0.2)
+                    : Colors.transparent,
+                child: Icon(
+                  Icons.create,
+                  color: ImageDrawLogic.colors[3],
+                ),
+              ),
               onTap: () {
-                imageDrawLogic.reset();
+                state(() {
+                  imageDrawLogic.selectedColor = ImageDrawLogic.colors[3];
+                });
+              },
+            ),
+          ],
+        );
+      }),
+    );
+  }
+  Widget _buildWordBottom() {
+    return Container(
+      color: Colors.white,
+      padding: EdgeInsets.only(top: 0, bottom: 0),
+      child: StatefulBuilder(builder: (context, state) {
+        return Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: <Widget>[
+            FlatButtonWithIcon(
+              icon: const Icon(AntdIcons.edit),
+              label: const Text(
+                '涂鸦',
+                style: TextStyle(fontSize: 10.0),
+              ),
+              textColor: Colors.black,
+              onPressed: () {
+                imageDrawLogic.isDraw.value=true;
               },
             ),
             GestureDetector(
-              child: Text('保存'),
-              onTap: ()  async{
-                RenderRepaintBoundary boundary =
-                imageDrawLogic.repaintKey.currentContext!.findRenderObject() as RenderRepaintBoundary;
-                imageDrawLogic.saveEmoji(boundary);
+              child: Container(
+                color: imageDrawLogic.selectedColor == ImageDrawLogic.colors[0]
+                    ? Colors.grey.withOpacity(0.2)
+                    : Colors.transparent,
+                child: Icon(
+                  AntdIcons.fontColors,
+                  color: ImageDrawLogic.colors[0],
+                ),
+              ),
+              onTap: () {
+                state(() {
+                  imageDrawLogic.selectedColor = ImageDrawLogic.colors[0];
+                });
+              },
+            ),
+            GestureDetector(
+              child: Container(
+                color: imageDrawLogic.selectedColor == ImageDrawLogic.colors[1]
+                    ? Colors.grey.withOpacity(0.2)
+                    : Colors.transparent,
+                child: Icon(
+                  AntdIcons.fontColors,
+                  color: ImageDrawLogic.colors[1],
+                ),
+              ),
+              onTap: () {
+                state(() {
+                  imageDrawLogic.selectedColor = ImageDrawLogic.colors[1];
+                });
+              },
+            ),
+            GestureDetector(
+              child: Container(
+                color: imageDrawLogic.selectedColor == ImageDrawLogic.colors[2]
+                    ? Colors.grey.withOpacity(0.2)
+                    : Colors.transparent,
+                child: Icon(
+                  AntdIcons.fontColors,
+                  color: ImageDrawLogic.colors[2],
+                ),
+              ),
+              onTap: () {
+                state(() {
+                  imageDrawLogic.selectedColor = ImageDrawLogic.colors[2];
+                });
+              },
+            ),
+            GestureDetector(
+              child: Container(
+                color: imageDrawLogic.selectedColor == ImageDrawLogic.colors[3]
+                    ? Colors.grey.withOpacity(0.2)
+                    : Colors.transparent,
+                child: Icon(
+                  AntdIcons.fontColors,
+                  color: ImageDrawLogic.colors[3],
+                ),
+              ),
+              onTap: () {
+                state(() {
+                  imageDrawLogic.selectedColor = ImageDrawLogic.colors[3];
+                });
               },
             ),
           ],
