@@ -1,4 +1,6 @@
 
+import 'dart:io';
+
 import 'package:emoji_manager/modules/bank/pic_album_controller.dart';
 import 'package:emoji_manager/modules/bank/pic_album_screen.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
@@ -27,7 +29,7 @@ class BankScreen extends GetView<BankController> {
               : topRightSecondWidget(context))
         ],
       ),
-      body: Obx(() => controller.files.isEmpty
+      body: Obx(() => controller.dirNameList.isEmpty
           ? noDirText()
           : albumGridView(context))
     );
@@ -82,7 +84,7 @@ class BankScreen extends GetView<BankController> {
       mainAxisSpacing: 4,
       crossAxisSpacing: 4,
       primary: false,
-      itemCount: controller.files.length,
+      itemCount: controller.dirNameList.length,
       itemBuilder: (BuildContext context, int index) => gridItem(index),
       staggeredTileBuilder: (int index) => StaggeredTile.count(1, 1),
       padding: EdgeInsets.all(4),
@@ -91,8 +93,7 @@ class BankScreen extends GetView<BankController> {
 
   ///单个图集预览图
   Widget gridItem(int index) {
-    String name = controller.files.elementAt(index).path.substring(
-        controller.files.elementAt(index).parent.path.length+1);
+    String name = controller.dirNameList.elementAt(index);
     return Obx(() =>
     controller.selectionMode.value
         ? selectedAlbum(index, name)
@@ -228,10 +229,9 @@ class BankScreen extends GetView<BankController> {
         child: Container(
           width: SizeConfig().screenWidth / 3,
           height: SizeConfig().screenWidth / 3,
-          child: Image.network(     //TODO: temp instance
-            controller.tempImageList[index],
-            fit: BoxFit.cover,
-          ),
+          child: controller.hasFirstPicList[index]
+              ? Image(image: FileImage(File(controller.firstPicPathList[index])),fit: BoxFit.cover,)
+              : Image.network( 'https://www.itying.com/images/flutter/4.png',fit: BoxFit.cover),
         ),
         onLongPress: () {
           controller.changeSelection(enable: false, index: -1);
@@ -275,10 +275,9 @@ class BankScreen extends GetView<BankController> {
         child: Container(
           width: SizeConfig().screenWidth / 3,
           height: SizeConfig().screenWidth / 3,
-          child: Image.network(     //TODO: temp instance
-            controller.tempImageList[index],
-            fit: BoxFit.cover,
-          ),
+          child: controller.hasFirstPicList[index]
+              ? Image(image: FileImage(File(controller.firstPicPathList[index])),fit: BoxFit.cover,)
+              : Image.network( 'https://www.itying.com/images/flutter/4.png',fit: BoxFit.cover),
         ),
         onLongPress: () {
           controller.changeSelection(enable: true, index: index);
@@ -308,7 +307,7 @@ class BankScreen extends GetView<BankController> {
                       okBtnTap: () {
                         controller.addPicAlbum();
                       },
-                      vc: controller.tc,
+                      vc: controller.addTc,
                       cancelBtnTap: () {
                         print('click cancel');
                       },
@@ -336,7 +335,7 @@ class BankScreen extends GetView<BankController> {
           return [
             PopupMenuItem(
               enabled: controller.selectedIndexList.length
-                  == controller.files.length
+                  == controller.dirNameList.length
                   ? false : true,
               child: Row(
                 children: [
