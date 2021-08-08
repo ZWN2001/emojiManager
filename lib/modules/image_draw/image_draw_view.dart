@@ -13,14 +13,6 @@ class ImageDrawPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // imageDrawLogic.drawStack.children.add(imageDrawLogic.emojiImage,);
-    // imageDrawLogic.drawStack.children.add(Positioned(
-    //   child: _buildWordCanvas(),
-    //   top: 0.0,
-    //   bottom: 0.0,
-    //   left: 0.0,
-    //   right: 0.0,
-    // ));
     imageDrawLogic.stackChildren.add(Positioned(
       child: _buildDrawCanvas(),
       top: 0.0,

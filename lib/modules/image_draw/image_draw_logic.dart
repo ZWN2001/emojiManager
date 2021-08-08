@@ -18,6 +18,8 @@ class ImageDrawLogic extends GetxController {
   Color selectedColor = colors[0];
 
    RxList<Widget> stackChildren=<Widget>[].obs;
+   //添加文字框的列表
+   List<ImageTextField> textList=<ImageTextField>[];
 
   static final List<double> lineWidths = [5.0, 8.0, 10.0];
   RxList<Point> points = [Point(colors[0], lineWidths[0],  [])].obs;
@@ -48,17 +50,29 @@ class ImageDrawLogic extends GetxController {
   }
 
   void addTextField(TapUpDetails details){
-    ImageTextField textField=ImageTextField(
+    ImageTextField textField=new ImageTextField(
       details.localPosition.dx,
       details.localPosition.dy,
       selectedColor,
       picWidth,
       picHeight,
-        (){
-
-        }
     );
-    stackChildren.add(textField);
+    // textList.add(textField);
+    // if(textList.length>1){
+    //   for(int i=0;i<textList.length-1;i++){
+    //     if(!textList[i].isEmptyInput()){
+    //       stackChildren.add(textList[i]);
+    //     }
+    //   }
+    // }else{
+      stackChildren.add(textField);
+    // }
+
+    // textList.forEach((element) {
+    //   if(!element.isEmptyInput()){
+    //     stackChildren.add(element);
+    //   }
+    // });
     update();
   }
 

@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
+import 'image_text_field_logic.dart';
 // ignore: must_be_immutable
 class ImageTextField extends StatefulWidget {
   ImageTextField(
-     this.x,
-     this.y,
-     this.textColor,
-     this.bgW,
-     this.bgH,
-     this.onLoseFocus,
-);
-  TextEditingController _textController = new TextEditingController();
+      this.x,
+      this.y,
+      this.textColor,
+      this.bgW,
+      this.bgH,
+      );
+  TextEditingController _focusTextController = new TextEditingController();
   FocusNode _focusNode = FocusNode();
 
   final Color textColor;
@@ -28,18 +29,21 @@ class ImageTextField extends StatefulWidget {
   late double _tempTextSize;
   late Offset _lastOffset;
 
-  String inputText='';
+  // String inputText='';
 
   //背景的宽高
   final double bgW;
   final double bgH;
 
-  VoidCallback? onLoseFocus;
+  bool isEmptyInput(){
+    return _focusTextController.text.isEmpty;
+  }
   @override
   ImageTextFieldState createState() => new ImageTextFieldState();
 }
 
 class ImageTextFieldState extends State<ImageTextField> {
+  final imageTextFieldLogic = Get.put(ImageTextFieldLogic());
 
   @override
   void initState() {
@@ -53,9 +57,9 @@ class ImageTextFieldState extends State<ImageTextField> {
 
     widget._focusNode.addListener((){
       if (widget._focusNode.hasFocus) {
-        print('得到焦点');
+          imageTextFieldLogic.focus.value=true;
       }else{
-        widget.onLoseFocus!();
+          imageTextFieldLogic.focus.value=false;
       }
     });
 
@@ -63,68 +67,96 @@ class ImageTextFieldState extends State<ImageTextField> {
   }
   @override
   Widget build(BuildContext context) {
-    return Positioned(
-                child: GestureDetector(
-                  child:Transform.rotate(
-                    angle: widget.rotation,
-                    child:Container(
-                      decoration: BoxDecoration(
-                          border: Border.all(width: 5),
-                          borderRadius: BorderRadius.only(
-                              topLeft: Radius.circular(30),
-                              bottomRight: Radius.circular(30),
-                              bottomLeft: Radius.circular(30),)),
-                      width:widget._width+70,height:widget._height+24,
-                      child:Stack(
-                        children: [
-                          Positioned(
-                            left: 10, top: 30,
-                            child: SizedBox(
-                              width: widget._width+30,
-                              height: widget._height,
-                              child:  TextField(
-                                focusNode: widget._focusNode,
-                                controller: widget._textController,
-                                autofocus: true,
-                                style: widget._textStyle,
-                                decoration: InputDecoration(
-                                  contentPadding: EdgeInsets.fromLTRB(2, 0, 0, 0),
-                                  border:InputBorder.none,
-                                ),
-                                // maxLength: 10,
-                                onChanged: (value){
-                                  setState(() {
-                                    widget.inputText=widget._textController.text;
-                                    widget._width =
-                                        boundingTextSize(widget._textController.text, widget._textStyle).width;
-                                  });
-                                },
-                              )  ,
-                            ),
+    return
+      GetBuilder<ImageTextFieldLogic>(
+        builder: (logic) {
+          return  Positioned(
+            child: GestureDetector(
+              child:Transform.rotate(
+                  angle: widget.rotation,
+                  child:Obx(()=>imageTextFieldLogic.focus.value?Container(
+                    decoration: BoxDecoration(
+                        border: Border.all(width: 2),
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(30),
+                          bottomRight: Radius.circular(30),
+                          bottomLeft: Radius.circular(30),)),
+                    width:widget._width+70,height:widget._height+24,
+                    child: Stack(
+                      children: [
+                        Positioned(
+                          left: 10, top: 30,
+                          child: SizedBox(
+                            width: widget._width+30,
+                            height: widget._height,
+                            child:  TextField(
+                              focusNode: widget._focusNode,
+                              controller: widget._focusTextController,
+                              autofocus: true,
+                              style: widget._textStyle,
+                              decoration: InputDecoration(
+                                contentPadding: EdgeInsets.fromLTRB(2, 0, 0, 0),
+                                border:InputBorder.none,
+                              ),
+                              // maxLength: 10,
+                              onChanged: (value){
+                                setState(() {
+                                  // widget.inputText=widget._focusTextController.text;
+                                  widget._width =
+                                      boundingTextSize(widget._focusTextController.text, widget._textStyle).width;
+                                });
+                              },
+                            )  ,
                           ),
-                          Positioned(
-                            child: Material(
-                              type: MaterialType.circle,
-                              color: Colors.transparent,
-                              clipBehavior: Clip.antiAlias,
-                              child:IconButton(
-                                onPressed: (){widget._textController.text='';},
-                                icon: Icon(Icons.delete_forever,size: 26,),
-                              ) ,
-                            ),
-                            left: widget._width+22,
-                            top: 0,
+                        ),
+                        Positioned(
+                          child: Material(
+                            type: MaterialType.circle,
+                            color: Colors.transparent,
+                            clipBehavior: Clip.antiAlias,
+                            child:IconButton(
+                              onPressed: (){widget._focusTextController.text='';},
+                              icon: Icon(Icons.delete_forever,size: 26,),
+                            ) ,
                           ),
-                        ],
-                      ),
+                          left: widget._width+22,
+                          top: 0,
+                        ),
+                      ],
                     ),
-                  ),
-                  onScaleEnd: scaleEnd,
-                  onScaleStart: scaleStart,
-                  onScaleUpdate: scaleUpdate,
-                ),
-                left: widget.x, top: widget.y,
-              );
+                  ):Container(
+                    width:widget._width+70,height:widget._height+24,
+                    child: Stack(
+                      children: [
+                        Positioned(
+                          left: 10, top: 30,
+                          child: SizedBox(
+                            width: widget._width+30,
+                            height: widget._height,
+                            child:  TextFormField(
+                              initialValue: widget._focusTextController.text,
+                              focusNode: widget._focusNode,
+                              style: widget._textStyle,
+                              decoration: InputDecoration(
+                                contentPadding: EdgeInsets.fromLTRB(2, 0, 0, 0),
+                                border:InputBorder.none,
+                              ),
+                            )  ,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ))
+              ),
+              onScaleEnd: scaleEnd,
+              onScaleStart: scaleStart,
+              onScaleUpdate: scaleUpdate,
+            ),
+            left: widget.x, top: widget.y,
+          );
+        },
+      )
+    ;
   }
 
   //开始缩放
@@ -140,9 +172,9 @@ class ImageTextFieldState extends State<ImageTextField> {
     setState(() {
       widget._textSize = widget._tempTextSize*details.scale.clamp(0.8, 2);
       widget._textStyle = TextStyle(color: widget.textColor,fontSize: widget._textSize);
-      widget._width = boundingTextSize(widget._textController.text, widget._textStyle).width;
-      widget._height = widget._textController.text==''?
-      boundingTextSize(widget._textController.text, widget._textStyle).height :70;
+      widget._width = boundingTextSize(widget._focusTextController.text, widget._textStyle).width;
+      widget._height = widget._focusTextController.text==''?
+      boundingTextSize(widget._focusTextController.text, widget._textStyle).height :70;
       widget.x += (details.focalPoint.dx - widget._lastOffset.dx);
       widget.y += (details.focalPoint.dy - widget._lastOffset.dy);
       if(widget.x < 0){
