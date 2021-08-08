@@ -2,6 +2,7 @@ import 'dart:typed_data';
 import 'dart:ui' as ui;
 
 import 'package:emoji_manager/util/image_edit_util/image_picker_io.dart';
+import 'package:emoji_manager/widget/image_text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:get/get.dart';
@@ -16,8 +17,10 @@ class ImageDrawLogic extends GetxController {
   ];
   Color selectedColor = colors[0];
 
+   RxList<Widget> stackChildren=<Widget>[].obs;
+
   static final List<double> lineWidths = [5.0, 8.0, 10.0];
-  List<Point> points = [Point(colors[0], lineWidths[0], [])];
+  RxList<Point> points = [Point(colors[0], lineWidths[0],  [])].obs;
 
   Map emojiInfo = Get.arguments;
   late Uint8List imageFile;
@@ -31,15 +34,32 @@ class ImageDrawLogic extends GetxController {
 
   final GlobalKey repaintKey = new GlobalKey();
 
-  Stack drawStack=new Stack(children: [],);
+  // late Stack drawStack;
   Rx<bool> isDraw=true.obs;
   bool isClear = false;
 
   @override
-  void onInit() async {
+  void onInit()  {
     super.onInit();
     imageFile=emojiInfo['image'];
     emojiImage=Image.memory(imageFile);
+    stackChildren.add(emojiImage);
+    // drawStack=new Stack(children: stackChildren.value,);
+  }
+
+  void addTextField(TapUpDetails details){
+    ImageTextField textField=ImageTextField(
+      details.localPosition.dx,
+      details.localPosition.dy,
+      selectedColor,
+      picWidth,
+      picHeight,
+        (){
+
+        }
+    );
+    stackChildren.add(textField);
+    update();
   }
 
   Future saveEmoji(RenderRepaintBoundary boundary) async {
@@ -57,7 +77,8 @@ class ImageDrawLogic extends GetxController {
     isClear = true;
     curFrame = 0;
     points.clear();
-    points.add(Point(selectedColor, strokeWidth, []));
+    points.add(Point(selectedColor, strokeWidth,  []));
+    update();
   }
 }
 class ImageDrawBinding extends Bindings {

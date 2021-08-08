@@ -13,7 +13,7 @@ class ImageDrawPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    imageDrawLogic.drawStack.children.add(imageDrawLogic.emojiImage,);
+    // imageDrawLogic.drawStack.children.add(imageDrawLogic.emojiImage,);
     // imageDrawLogic.drawStack.children.add(Positioned(
     //   child: _buildWordCanvas(),
     //   top: 0.0,
@@ -21,7 +21,7 @@ class ImageDrawPage extends StatelessWidget {
     //   left: 0.0,
     //   right: 0.0,
     // ));
-    imageDrawLogic.drawStack.children.add(Positioned(
+    imageDrawLogic.stackChildren.add(Positioned(
       child: _buildDrawCanvas(),
       top: 0.0,
       bottom: 0.0,
@@ -53,14 +53,16 @@ class ImageDrawPage extends StatelessWidget {
           builder: (logic) {
             return  Column(
               children: <Widget>[
-                Expanded(child: SizedBox()),
+                Expanded(child: Container()),
                 RepaintBoundary(
                   key: imageDrawLogic.repaintKey,
-                  child: imageDrawLogic.drawStack,
+                  child: Obx(()=>Stack(
+                    alignment: Alignment.center,
+                    children: imageDrawLogic.stackChildren.value,
+                  )),
                 ),
-                Expanded(child: SizedBox()),
+                Expanded(child: Container()),
                 Obx(()=>imageDrawLogic.isDraw.value?_buildDrawBottom():_buildWordBottom())
-
               ],
             );
           },
@@ -74,39 +76,46 @@ class ImageDrawPage extends StatelessWidget {
       return AsperctRaioImage.memory(
           imageDrawLogic.imageFile,
           memoryBuilder:  (context, snapshot, url){
-            return CustomPaint(
-              size: Size(snapshot.data!.width.toDouble(),snapshot.data!.height.toDouble()),
+            imageDrawLogic.picWidth=snapshot.data!.width.toDouble();
+            imageDrawLogic.picHeight=snapshot.data!.height.toDouble();
+            return Obx(()=>CustomPaint(
+              size: Size(imageDrawLogic.picWidth,imageDrawLogic.picHeight),
               foregroundPainter: ScrawlPainter(
-                points: imageDrawLogic.points,
+                // ignore: invalid_use_of_protected_member
+                points: imageDrawLogic.points.value,
                 strokeColor: imageDrawLogic.selectedColor,
                 strokeWidth: imageDrawLogic.strokeWidth,
                 isClear: imageDrawLogic.isClear,
               ),
-              child: GestureDetector(
-                onPanStart: (details) {
-                  imageDrawLogic.isClear = false;
-                  imageDrawLogic.points[imageDrawLogic.curFrame].color
-                  = imageDrawLogic.selectedColor;
-                  imageDrawLogic.points[imageDrawLogic.curFrame].strokeWidth
-                  = imageDrawLogic.strokeWidth;
+              child: imageDrawLogic.isDraw.value?GestureDetector(
+                onPanDown: (details) {
+                    imageDrawLogic.isClear = false;
+                    imageDrawLogic.points[imageDrawLogic.curFrame].color
+                    = imageDrawLogic.selectedColor;
+                    imageDrawLogic.points[imageDrawLogic.curFrame].strokeWidth
+                    = imageDrawLogic.strokeWidth;
                 },
                 onPanUpdate: (details) {
-                  RenderBox referenceBox = context.findRenderObject() as RenderBox;
-                  Offset localPosition =
-                  referenceBox.globalToLocal(details.globalPosition);
-                  state(() {
-                    imageDrawLogic.points[imageDrawLogic.curFrame].points.add(localPosition);
-                  });
+                    RenderBox referenceBox = context.findRenderObject() as RenderBox;
+                    Offset localPosition =
+                    referenceBox.globalToLocal(details.globalPosition);
+                    state(() {
+                      imageDrawLogic.points[imageDrawLogic.curFrame].points.add(localPosition);
+                    });
                 },
                 onPanEnd: (details) {
                   //准备下次绘制
-                  imageDrawLogic.points.add(
-                      Point(imageDrawLogic.selectedColor, imageDrawLogic.strokeWidth, [])
-                  );
-                  imageDrawLogic.curFrame++;
+                    imageDrawLogic.points.add(
+                        Point(imageDrawLogic.selectedColor, imageDrawLogic.strokeWidth, [])
+                    );
+                    imageDrawLogic.curFrame++;
                 },
+              ):GestureDetector(
+                onTapUp: (details){
+                    imageDrawLogic.addTextField(details);
+                  }
               ) ,
-            );
+            ));
           }
       );
     });
