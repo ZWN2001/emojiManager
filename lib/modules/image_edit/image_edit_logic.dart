@@ -33,6 +33,7 @@ class ImageEditLogic extends GetxController {
     cropAspectRatio = cropAspectRatios.elementAt(0) ;
     cropLayerPainter = const EditorCropLayerPainter();
   }
+
   void changeCropAspectRatio(AspectRatioItem item){
     cropAspectRatio = item;
     update();
@@ -42,7 +43,6 @@ class ImageEditLogic extends GetxController {
     if (cropping) {
       return;
     }
-    String msg = '';
     try {
       cropping = true;
       Uint8List? fileData;
@@ -50,8 +50,7 @@ class ImageEditLogic extends GetxController {
       emojiInfo['image']=fileData;
       Get.toNamed('/ImageDrawPage',arguments: emojiInfo);
     } catch (e, stack) {
-      msg = 'save failed: $e\n $stack';
-      print(msg);
+      print(stack);
     }
     cropping = false;
   }

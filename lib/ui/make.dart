@@ -5,7 +5,9 @@ import 'package:emoji_manager/util/image_edit_util/image_picker_io.dart';
 import 'package:emoji_manager/util/icon_util/index.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
+import 'package:emoji_manager/util/sqlite_util.dart';
 
 class MakePage extends StatelessWidget{
   @override
@@ -33,9 +35,15 @@ class MakePage extends StatelessWidget{
               ),
               child: Text('制作静态表情包', style: TextStyle(fontSize: 24),),
               onPressed: () async {
-                Uint8List? _memoryImage = await pickImage(context);
-                if(_memoryImage!=null){
-                  Get.toNamed("/StaticEmojiInfo",arguments: _memoryImage);
+                String sql = 'SELECT * FROM directory_name';
+                List<Map> list = await SqliteUtil().query('emojiManager', sql);
+                if(list.isEmpty){
+                  Fluttertoast.showToast(msg: '还没有图集哦，请先创建图集',toastLength: Toast.LENGTH_SHORT);
+                }else{
+                  Uint8List? _memoryImage = await pickImage(context);
+                  if(_memoryImage!=null){
+                    Get.toNamed("/StaticEmojiInfo",arguments: _memoryImage);
+                  }
                 }
               },
             ),

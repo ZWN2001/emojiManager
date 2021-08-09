@@ -8,6 +8,7 @@ import 'package:get/get.dart';
 
 class StaticEmojiInfoPage extends StatelessWidget {
   final StaticEmojiInfoLogic staticEmojiInfoLogic = Get.put(StaticEmojiInfoLogic());
+  // final BankController bankController = Get.find<BankController>();
 
   @override
   Widget build(BuildContext context) {
@@ -19,12 +20,18 @@ class StaticEmojiInfoPage extends StatelessWidget {
         body: ListView(
           children: [
             Container(
-              margin: EdgeInsets.fromLTRB(40, 80, 40, 20),
+              margin: EdgeInsets.fromLTRB(40, 25, 40, 20),
               child: Image.memory(
                 _memoryImage!,
                 fit: BoxFit.contain,
               ),
             ),
+
+            Container(
+              margin: EdgeInsets.fromLTRB(80, 0, 80, 10),
+              child: _buildDropDown(),
+            ),
+
             Container(
               margin: EdgeInsets.fromLTRB(80, 0, 80, 10),
               child: TextField(
@@ -70,7 +77,8 @@ class StaticEmojiInfoPage extends StatelessWidget {
                     Map emojiInfo={
                       'name':staticEmojiInfoLogic.nameEditController.text,
                       'keyWord':staticEmojiInfoLogic.keyWordEditController.text,
-                      'image':_memoryImage
+                      'image':_memoryImage,
+                      'path':staticEmojiInfoLogic.selectedPath,
                     };
                     Get.toNamed("/ImageEditPage",arguments: emojiInfo);
                   }
@@ -80,4 +88,27 @@ class StaticEmojiInfoPage extends StatelessWidget {
           ],
         ));
   }
+  Widget _buildDropDown(){
+    return GetBuilder<StaticEmojiInfoLogic>(builder:(logic){
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text('选择图集:',style: TextStyle(color: Colors.grey),),
+          Obx(()=>DropdownButton(
+              value: staticEmojiInfoLogic.selectedValue.value,
+              icon: Icon(Icons.arrow_drop_down,size: 24,),
+              isExpanded: true,
+              underline: Container(height: 1, color: Colors.grey),
+              items: staticEmojiInfoLogic.items,
+              onChanged: (value) {
+                staticEmojiInfoLogic.selectedValue.value = int.parse(value.toString());
+                staticEmojiInfoLogic.selectedPath=staticEmojiInfoLogic.pathList[staticEmojiInfoLogic.selectedValue.value];
+              }
+          ))
+        ],
+      );
+    });
+
+  }
+
 }

@@ -5,6 +5,7 @@ import 'dart:typed_data';
 import 'package:flutter/cupertino.dart';
 // import 'package:photo_manager/photo_manager.dart';
 import 'package:wechat_assets_picker/wechat_assets_picker.dart';
+import 'package:path/path.dart' as path;
 
 Future<Uint8List?> pickImage(BuildContext context) async {
   List<AssetEntity> assets = <AssetEntity>[];
@@ -31,6 +32,10 @@ class ImageSaver {
         await PhotoManager.editor.saveImage(fileData);
     final File? file = await imageEntity?.file;
     return file?.path;
+  }
+  static Future<String?> saveImg(String filename, Uint8List fileData,String filePath) async {
+    final imageFile = File(path.join(filePath, '$filename.png')); // 保存在应用文件夹内
+    await imageFile.writeAsBytes(fileData); // 需要使用与图片格式对应的encode方法
   }
 }
 
