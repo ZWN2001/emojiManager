@@ -1,3 +1,4 @@
+import 'package:emoji_manager/ui/make.dart';
 import 'package:emoji_manager/util/icon_util/antd_icons.dart';
 import 'package:emoji_manager/util/image_draw_painter.dart';
 import 'package:emoji_manager/util/image_edit_util/asperct_raio_image.dart';
@@ -36,6 +37,12 @@ class ImageDrawPage extends StatelessWidget {
               RenderRepaintBoundary boundary =
               imageDrawLogic.repaintKey.currentContext!.findRenderObject() as RenderRepaintBoundary;
               imageDrawLogic.saveEmoji(boundary);
+              // Get.offAll(MakePage());
+              Navigator.popUntil(context, (route)  {
+              print('route$route');
+                  if(route.settings.name == "/") {return true;}
+              return false;
+            });
             },
           ),
         ],

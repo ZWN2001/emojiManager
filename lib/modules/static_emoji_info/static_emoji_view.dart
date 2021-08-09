@@ -108,7 +108,5 @@ class StaticEmojiInfoPage extends StatelessWidget {
         ],
       );
     });
-
   }
-
 }
