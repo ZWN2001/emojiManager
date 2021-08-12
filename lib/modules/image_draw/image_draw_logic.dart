@@ -1,12 +1,12 @@
 import 'dart:typed_data';
 import 'dart:ui' as ui;
 
-import 'package:emoji_manager/util/image_edit_util/image_picker_io.dart';
-import 'package:emoji_manager/widget/image_text_field.dart';
+import 'package:emoji_manager/util/util.dart';
+import 'package:emoji_manager/widget/widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:get/get.dart';
-import 'package:emoji_manager/util/image_draw_painter.dart';
+
 class ImageDrawLogic extends GetxController {
 
   static final List<Color> colors = [

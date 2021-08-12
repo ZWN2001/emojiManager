@@ -1,7 +1,6 @@
 
 import 'dart:io';
 
-import 'package:emoji_manager/util/sqlite_util.dart';
 import 'package:emoji_manager/widget/dialog/text_field_dialog.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';

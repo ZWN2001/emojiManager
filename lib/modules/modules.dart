@@ -1,2 +1,12 @@
 export 'bank/bank_controller.dart';
 export 'bank/bank_screen.dart';
+export 'bank/pic_album_controller.dart';
+export 'bank/pic_album_screen.dart';
+export 'bank/pic_info_controller.dart';
+export 'bank/pic_info_screen.dart';
+export 'image_draw/image_draw_logic.dart';
+export 'image_draw/image_draw_view.dart';
+export 'image_edit/image_edit_logic.dart';
+export 'image_edit/image_edit_view.dart';
+export 'static_emoji_info/static_emoji_logic.dart';
+export 'static_emoji_info/static_emoji_view.dart';

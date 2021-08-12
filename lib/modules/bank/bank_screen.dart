@@ -1,8 +1,7 @@
 
 import 'dart:io';
 
-import 'package:emoji_manager/modules/bank/pic_album_controller.dart';
-import 'package:emoji_manager/modules/bank/pic_album_screen.dart';
+import 'package:emoji_manager/modules/modules.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
