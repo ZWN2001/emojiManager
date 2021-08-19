@@ -1,6 +1,4 @@
 import 'dart:typed_data';
-
-import 'package:emoji_manager/ui/zoom_page.dart';
 import 'package:emoji_manager/util/image_edit_util/image_picker_io.dart';
 import 'package:emoji_manager/util/icon_util/index.dart';
 import 'package:flutter/cupertino.dart';
@@ -75,8 +73,14 @@ class MakePage extends StatelessWidget{
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18.0),),
               ),
               child: Text('表情包放大', style: TextStyle(fontSize: 24),),
-              onPressed: () {
-                Get.to(()=>ZoomPage());
+              onPressed: () async {
+                String sql = 'SELECT * FROM directory_name';
+                List<Map> list = await SqliteUtil().query('emojiManager', sql);
+                if(list.isEmpty){
+                  Fluttertoast.showToast(msg: '还没有图集哦，请先创建图集',toastLength: Toast.LENGTH_SHORT);
+                }else{
+                    Get.toNamed("/ZoomPage");
+                }
               },
             )
           ],

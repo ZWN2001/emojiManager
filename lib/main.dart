@@ -2,6 +2,8 @@
 import 'package:emoji_manager/modules/image_draw/image_draw_logic.dart';
 import 'package:emoji_manager/modules/image_edit/image_edit_logic.dart';
 import 'package:emoji_manager/modules/static_emoji_info/static_emoji_logic.dart';
+import 'package:emoji_manager/modules/zoom_page/zoom_page_logic.dart';
+import 'package:emoji_manager/modules/zoom_page/zoom_page_view.dart';
 import 'package:emoji_manager/ui/ui.dart';
 import 'package:emoji_manager/util/util.dart';
 import 'package:flutter/material.dart';
@@ -28,6 +30,7 @@ class MyApp extends StatelessWidget {
         GetPage(name: '/ImageEditPage', page:()=>ImageEditPage(),binding: ImageEditBindings()),
         GetPage(name: '/ImageDrawPage', page: ()=>ImageDrawPage(),binding: ImageDrawBinding()),
         GetPage(name: '/StaticEmojiInfo', page:()=>StaticEmojiInfoPage(),binding: StaticEmojiInfoBinding()),
+        GetPage(name: '/ZoomPage', page:()=>ZoomPage(),binding: ZoomPageBinding()),
       ],
       theme: ThemeData(primarySwatch: Colors.deepOrange),
     );
