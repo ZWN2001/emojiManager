@@ -46,10 +46,44 @@ class DirectoryUtil {
   }
 
   //文件夹删除
-Future deleteDir(String dirName) async {
-  String path = await getDirPath(dirName);
-  await Directory(path).delete();
-  print('delete');
+  Future deleteDir(String dirName) async {
+    String path = await getDirPath(dirName);
+    await Directory(path).delete();
+    print('delete');
+  }
+
+  Future fileRename(String oldPath, String newName) async {
+    List temp = oldPath.split("/");
+    temp[temp.length - 1] = newName;
+    String newPath = '';
+    for (int i = 0; i < temp.length; i++) {
+      if (i != 0) {
+        newPath = newPath+"/"+temp[i];
+      }
+    }
+    print('oldPath $oldPath');
+    print('newPath $newPath');
+    File file = new File(oldPath);
+    await file.rename(newPath);
+  }
+
+  Future fileDelete(String filePath) async {
+    File file = new File(filePath);
+    await file.delete();
+  }
+
+  Future fileReplace(String oldPath, String newDirName) async {
+    File file = new File(oldPath);
+    List temp = oldPath.split("/");
+    temp[temp.length - 2] = newDirName;
+    String newPath = '';
+    for (int i = 0; i < temp.length; i++) {
+      if (i != 0) {
+        newPath = newPath+"/"+temp[i];
+      }
+    }
+    print('new Path $newPath');
+    await file.rename(newPath);
   }
 
 

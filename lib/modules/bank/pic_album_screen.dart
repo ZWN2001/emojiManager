@@ -17,10 +17,9 @@ class PicAlbumScreen extends GetView<PicAlbumController> {
       appBar: AppBar(
         title: Text(controller.dirName),
       ),
-      body: Obx(() => controller.tempImageList.length == 0
+      body: Obx(() => controller.imageList.length == 0
           ? noPicText()
           : picGridView()),
-      //TODO: tempImageList -> imageList.value
     );
   }
 
@@ -53,7 +52,7 @@ class PicAlbumScreen extends GetView<PicAlbumController> {
       mainAxisSpacing: 4,
       crossAxisSpacing: 4,
       primary: false,
-      itemCount: controller.tempImageList.length,  //TODO: tempImageList -> imageList
+      itemCount: controller.imageList.length,
       itemBuilder: (BuildContext context, int index) {
         return imageItem(index);
       },
@@ -65,12 +64,17 @@ class PicAlbumScreen extends GetView<PicAlbumController> {
   Widget imageItem(int index) {
     return GridTile(
         child: InkResponse(
-          child: Image.network(controller.tempImageList.elementAt(index),fit: BoxFit.cover,),
-          //TODO: temp instance, Image.network() -> imageList.elementAt(index)
-          onTap: () {
-            Get.to(() => PicInfoScreen(),
-                binding: PicInfoBinding(controller.tempImageList.elementAt(index).toString()));
-            //TODO: temp instance ... -> imagePath: picPathList.elementAt(index).toString();
+          child: controller.imageList.elementAt(index),
+          //Image.network(controller.tempImageList.elementAt(index),fit: BoxFit.cover,),
+          onTap: () async {
+            await Get.to(() => PicInfoScreen(),
+                binding: PicInfoBinding(
+                    controller.picPathList.elementAt(index).path,
+                    controller.dirName))
+            !.then((value) => value == "refresh"
+                ? controller.initAgain()
+                : null
+            );
           },
         )
     );

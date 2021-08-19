@@ -85,7 +85,7 @@ class BankController extends GetxController{
         print('此图集内没有图片');
       } else {
         hasFirstPicList.add(true);
-        firstPicPathList.add(picPathList[0]);
+        firstPicPathList.add(picPathList[0].path);
         print('此图集内有图片');
       }
     }
@@ -169,6 +169,9 @@ class BankController extends GetxController{
   @override
   void onInit() {
     super.onInit();
+    //DirectoryUtil().deleteDir("第一个/aaa?bbb.png.png");
+    //File file = File("/data/user/0/com.example.emoji_manager/app_flutter/emojiManager/第一个/aaa?bbb.png.png");
+    //file.delete();
     SqliteUtil().createDb(createDbSql, dbName);
     DirectoryUtil().dirList(rootName).then((value) {
       getDirList1().then((value) {

@@ -80,7 +80,7 @@ class ImageDrawLogic extends GetxController {
     ui.Image image = await boundary.toImage();
     ByteData? byteData = await image.toByteData(format: ui.ImageByteFormat.png);
     Uint8List pngBytes = byteData!.buffer.asUint8List();
-    await ImageSaver.saveImg('${emojiInfo['name']}?${emojiInfo['keyWord']}.png', pngBytes,emojiInfo['path']);
+    await ImageSaver.saveImg('${emojiInfo['name']}?${emojiInfo['keyWord']}', pngBytes,emojiInfo['path']);
     print(emojiInfo['path']);
   }
 

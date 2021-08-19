@@ -221,7 +221,8 @@ class BankScreen extends GetView<BankController> {
           name,
           style: TextStyle(
               fontSize: 20,
-              color: Colors.white),
+              color: Colors.white
+          ),
         ),
       ),
       child: GestureDetector(
