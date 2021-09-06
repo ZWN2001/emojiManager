@@ -1,4 +1,3 @@
-
 import 'package:emoji_manager/modules/image_draw/image_draw_logic.dart';
 import 'package:emoji_manager/modules/image_edit/image_edit_logic.dart';
 import 'package:emoji_manager/modules/static_emoji_info/static_emoji_logic.dart';
@@ -8,15 +7,18 @@ import 'package:emoji_manager/ui/ui.dart';
 import 'package:emoji_manager/util/util.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:get/get_navigation/src/routes/get_route.dart';
 import 'package:emoji_manager/modules/modules.dart';
+import 'package:package_info/package_info.dart';
 
 import 'modules/image_draw/image_draw_view.dart';
 import 'modules/image_edit/image_edit_view.dart';
 import 'modules/static_emoji_info/static_emoji_view.dart';
-
+import 'util/api.dart';
+import 'dart:io';
 
 void main() => runApp(MyApp());
 
@@ -46,12 +48,14 @@ class _MyHomePageState extends State<MyHomePage> {
   final dirName = "emojiManager";
   int lastTime = 0;
   int index = 0;
+  late String versionId;
 
   final List<Widget>  pages = [BankScreen(), MakePage(), SettingPage()];
   @override
   void initState() {
     super.initState();
     DirectoryUtil().createDir(dirName);
+    update();
   }
 
   @override
@@ -140,6 +144,29 @@ class _MyHomePageState extends State<MyHomePage> {
     return this.index == value
         ? Theme.of(context).cardColor
         : Color(0XFFBBBBBB);
+  }
+
+  void update() async {
+    PackageInfo.fromPlatform().then((PackageInfo packageInfo) {
+      versionId = packageInfo.version;
+    });
+    Version? version = await UpdateAPI.checkUpdate(versionId);
+    if(version != null){
+      if (Platform.isAndroid) {
+        var flutterLocalNotificationsPlugin =
+        new FlutterLocalNotificationsPlugin();
+        var android = new AndroidInitializationSettings('@mipmap/ic_launcher');
+        var initSettings = new InitializationSettings(android: android);
+        flutterLocalNotificationsPlugin.initialize(initSettings);
+        var androidDetail = new AndroidNotificationDetails(
+            'CHANNEL ID', 'CHANNEL NAME', 'CHANNEL DESCRIPTION',
+            priority: Priority.high, importance: Importance.max);
+        var platform = new NotificationDetails(android: androidDetail);
+        await flutterLocalNotificationsPlugin.show(
+            0, 'i山大有新版本了', version.updateDescription, platform,
+            payload: version.apkUrl);
+      }
+    }
   }
 }
 
